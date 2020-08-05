@@ -1,0 +1,3461 @@
+{
+    "id": "root",
+    "children": [
+      {
+        "id": "n3",
+        "labels": [
+          {
+            "text": "discovery_cache-master-key"
+          }
+        ],
+        "type": "aws_kms_key",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n4",
+        "labels": [
+          {
+            "text": "discovery_cache-master-key"
+          }
+        ],
+        "type": "aws_kms_alias",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n5",
+        "labels": [
+          {
+            "text": "discovery_collector-service"
+          }
+        ],
+        "type": "aws_ecs_service",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n6",
+        "labels": [
+          {
+            "text": "discovery_cloudwatch-collector-queue-cloudwatch-alaram-messages-high"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n7",
+        "labels": [
+          {
+            "text": "discovery_collector-queue-cloudwatch-alaram-messages-low"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n8",
+        "labels": [
+          {
+            "text": "discovery_collector-autoscaling-target"
+          }
+        ],
+        "type": "aws_appautoscaling_target",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n9",
+        "labels": [
+          {
+            "text": "discovery_collector-autoscaling-up"
+          }
+        ],
+        "type": "aws_appautoscaling_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n10",
+        "labels": [
+          {
+            "text": "discovery_collector-autoscaling-down"
+          }
+        ],
+        "type": "aws_appautoscaling_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n11",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-service"
+          }
+        ],
+        "type": "aws_ecs_service",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n12",
+        "labels": [
+          {
+            "text": "discovery_diff-tagging-failed-event-error"
+          }
+        ],
+        "type": "aws_cloudwatch_log_metric_filter",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n13",
+        "labels": [
+          {
+            "text": "discovery_publisher-lambda-sqs-mapping"
+          }
+        ],
+        "type": "aws_lambda_event_source_mapping",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n14",
+        "labels": [
+          {
+            "text": "discovery_consistency-checker-lambda-sqs-mapping"
+          }
+        ],
+        "type": "aws_lambda_event_source_mapping",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n15",
+        "labels": [
+          {
+            "text": "discovery_ops-dashboard"
+          }
+        ],
+        "type": "aws_cloudwatch_dashboard",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n16",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-log-group"
+          }
+        ],
+        "type": "aws_cloudwatch_log_group",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n17",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-task-definition"
+          }
+        ],
+        "type": "aws_ecs_task_definition",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n18",
+        "labels": [
+          {
+            "text": "discovery_platform-s-cluster"
+          }
+        ],
+        "type": "aws_ecs_cluster",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n19",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-queue-cloudwatch-alaram-messages-high"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n20",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-queue-cloudwatch-alaram-messages-low"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n21",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-autoscaling-target"
+          }
+        ],
+        "type": "aws_appautoscaling_target",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n22",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-autoscaling-up"
+          }
+        ],
+        "type": "aws_appautoscaling_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n23",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-autoscaling-down"
+          }
+        ],
+        "type": "aws_appautoscaling_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n28",
+        "labels": [
+          {
+            "text": "discovery_vpc-flow-log-group"
+          }
+        ],
+        "type": "aws_cloudwatch_log_group",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n29",
+        "labels": [
+          {
+            "text": "discovery_vpc"
+          }
+        ],
+        "type": "aws_vpc",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n30",
+        "labels": [
+          {
+            "text": "discovery_nat-gateway-eip"
+          }
+        ],
+        "type": "aws_eip",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n31",
+        "labels": [
+          {
+            "text": "discovery_internet-gateway"
+          }
+        ],
+        "type": "aws_internet_gateway",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n32",
+        "labels": [
+          {
+            "text": "discovery_public-subnet"
+          }
+        ],
+        "type": "aws_subnet",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n33",
+        "labels": [
+          {
+            "text": "discovery_private-subnet-az-a"
+          }
+        ],
+        "type": "aws_subnet",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n34",
+        "labels": [
+          {
+            "text": "discovery_private-subnet-az-b"
+          }
+        ],
+        "type": "aws_subnet",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n35",
+        "labels": [
+          {
+            "text": "discovery_nat-gateway"
+          }
+        ],
+        "type": "aws_nat_gateway",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n36",
+        "labels": [
+          {
+            "text": "discovery_public-route-table"
+          }
+        ],
+        "type": "aws_route_table",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n37",
+        "labels": [
+          {
+            "text": "discovery_public-route"
+          }
+        ],
+        "type": "aws_route",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n38",
+        "labels": [
+          {
+            "text": "discovery_private-route-table"
+          }
+        ],
+        "type": "aws_route_table",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n39",
+        "labels": [
+          {
+            "text": "discovery_private-route"
+          }
+        ],
+        "type": "aws_route",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n40",
+        "labels": [
+          {
+            "text": "discovery_public-route-table-association"
+          }
+        ],
+        "type": "aws_route_table_association",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n41",
+        "labels": [
+          {
+            "text": "discovery_private-route-table-association"
+          }
+        ],
+        "type": "aws_main_route_table_association",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n42",
+        "labels": [
+          {
+            "text": "discovery_vpc-endpoint-s3"
+          }
+        ],
+        "type": "aws_vpc_endpoint",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n43",
+        "labels": [
+          {
+            "text": "discovery_vpc-endpoint-dynamodb"
+          }
+        ],
+        "type": "aws_vpc_endpoint",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n44",
+        "labels": [
+          {
+            "text": "discovery_vpc-flow-log-role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n45",
+        "labels": [
+          {
+            "text": "discovery_vpc-flow-log-policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n46",
+        "labels": [
+          {
+            "text": "discovery_vpc-flow-log"
+          }
+        ],
+        "type": "aws_flow_log",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n47",
+        "labels": [
+          {
+            "text": "discovery_cache-subnet-group1"
+          }
+        ],
+        "type": "aws_elasticache_subnet_group",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n48",
+        "labels": [
+          {
+            "text": "discovery_cache-security-group1"
+          }
+        ],
+        "type": "aws_security_group",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n49",
+        "labels": [
+          {
+            "text": "discovery_ecs-execution-policy"
+          }
+        ],
+        "type": "aws_iam_policy_document",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n50",
+        "labels": [
+          {
+            "text": "discovery_ecs-execution-role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n51",
+        "labels": [
+          {
+            "text": "discovery_ecs-task-execution-policy"
+          }
+        ],
+        "type": "aws_iam_role_policy_attachment",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n52",
+        "labels": [
+          {
+            "text": "discovery_ecs-autoscale-policy"
+          }
+        ],
+        "type": "aws_iam_policy_document",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n53",
+        "labels": [
+          {
+            "text": "discovery_ecs-autoscale-role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n54",
+        "labels": [
+          {
+            "text": "discovery_ecs-autoscale-policy"
+          }
+        ],
+        "type": "aws_iam_policy_attachment",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n55",
+        "labels": [
+          {
+            "text": "discovery_collector-log-group"
+          }
+        ],
+        "type": "aws_cloudwatch_log_group",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n56",
+        "labels": [
+          {
+            "text": "discovery_collector-task-definition"
+          }
+        ],
+        "type": "aws_ecs_task_definition",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n57",
+        "labels": [
+          {
+            "text": "discovery_ecs-collector-role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n58",
+        "labels": [
+          {
+            "text": "discovery_ecs-collector-role_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n59",
+        "labels": [
+          {
+            "text": "discovery_ecs-diff-engine-role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n60",
+        "labels": [
+          {
+            "text": "discovery_ecs-diff-engine-role_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n61",
+        "labels": [
+          {
+            "text": "discovery_aws-discovery-queue"
+          }
+        ],
+        "type": "aws_sqs_queue",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n62",
+        "labels": [
+          {
+            "text": "discovery_collector-queue"
+          }
+        ],
+        "type": "aws_sqs_queue",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n63",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-queue"
+          }
+        ],
+        "type": "aws_sqs_queue",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n64",
+        "labels": [
+          {
+            "text": "discovery_publisher-queue"
+          }
+        ],
+        "type": "aws_sqs_queue",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n65",
+        "labels": [
+          {
+            "text": "discovery_consistency-checker-queue"
+          }
+        ],
+        "type": "aws_sqs_queue",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n66",
+        "labels": [
+          {
+            "text": "discovery_decommission-queue"
+          }
+        ],
+        "type": "aws_sqs_queue",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n67",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-queue"
+          }
+        ],
+        "type": "aws_sqs_queue",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n68",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-deadletter-queue"
+          }
+        ],
+        "type": "aws_sqs_queue",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n69",
+        "labels": [
+          {
+            "text": "discovery_consistency-checker-deadletter-queue"
+          }
+        ],
+        "type": "aws_sqs_queue",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n70",
+        "labels": [
+          {
+            "text": "discovery_collector-deadletter-queue"
+          }
+        ],
+        "type": "aws_sqs_queue",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n71",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-deadletter-queue"
+          }
+        ],
+        "type": "aws_sqs_queue",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n72",
+        "labels": [
+          {
+            "text": "discovery_publisher-deadletter-queue"
+          }
+        ],
+        "type": "aws_sqs_queue",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n73",
+        "labels": [
+          {
+            "text": "discovery_decommission-deadletter-queue"
+          }
+        ],
+        "type": "aws_sqs_queue",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n74",
+        "labels": [
+          {
+            "text": "discovery_scheduled-discovery-topic"
+          }
+        ],
+        "type": "aws_sns_topic",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n75",
+        "labels": [
+          {
+            "text": "discovery_scheduled-discovery-topic_Sub_sqs_discovery_collector-queue"
+          }
+        ],
+        "type": "aws_sns_topic_subscription",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n76",
+        "labels": [
+          {
+            "text": "discovery_s3-notification-topic"
+          }
+        ],
+        "type": "aws_sns_topic",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n77",
+        "labels": [
+          {
+            "text": "discovery_events-topic"
+          }
+        ],
+        "type": "aws_sns_topic",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n78",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-topic"
+          }
+        ],
+        "type": "aws_sns_topic",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n79",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-topic_Sub_sqs_discovery_diff-engine-queue"
+          }
+        ],
+        "type": "aws_sns_topic_subscription",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n80",
+        "labels": [
+          {
+            "text": "discovery_publisher-topic"
+          }
+        ],
+        "type": "aws_sns_topic",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n81",
+        "labels": [
+          {
+            "text": "discovery_publisher-topic_Sub_sqs_discovery_publisher-queue"
+          }
+        ],
+        "type": "aws_sns_topic_subscription",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n82",
+        "labels": [
+          {
+            "text": "discovery_publisher-topic_Sub_sqs_discovery_consistency-checker-queue"
+          }
+        ],
+        "type": "aws_sns_topic_subscription",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n83",
+        "labels": [
+          {
+            "text": "discovery_provider-inconsistency-topic"
+          }
+        ],
+        "type": "aws_sns_topic",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n84",
+        "labels": [
+          {
+            "text": "discovery_agent-status_ReadThrottleEvents_capacityAlarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n85",
+        "labels": [
+          {
+            "text": "discovery_agent-status_WriteThrottleEvents_capacityAlarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n86",
+        "labels": [
+          {
+            "text": "discovery_agent-status"
+          }
+        ],
+        "type": "aws_dynamodb_table",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n87",
+        "labels": [
+          {
+            "text": "discovery_tenant-config_ReadThrottleEvents_capacityAlarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n88",
+        "labels": [
+          {
+            "text": "discovery_tenant-config_WriteThrottleEvents_capacityAlarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n89",
+        "labels": [
+          {
+            "text": "discovery_tenant-config"
+          }
+        ],
+        "type": "aws_dynamodb_table",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n90",
+        "labels": [
+          {
+            "text": "discovery_collector-config_ReadThrottleEvents_capacityAlarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n91",
+        "labels": [
+          {
+            "text": "discovery_collector-config_WriteThrottleEvents_capacityAlarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n92",
+        "labels": [
+          {
+            "text": "discovery_collector-config"
+          }
+        ],
+        "type": "aws_dynamodb_table",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n93",
+        "labels": [
+          {
+            "text": "discovery_consistency-data_ReadThrottleEvents_capacityAlarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n94",
+        "labels": [
+          {
+            "text": "discovery_consistency-data_WriteThrottleEvents_capacityAlarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n95",
+        "labels": [
+          {
+            "text": "discovery_consistency-data"
+          }
+        ],
+        "type": "aws_dynamodb_table",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n96",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency_ReadThrottleEvents_capacityAlarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n97",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency_WriteThrottleEvents_capacityAlarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n98",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency"
+          }
+        ],
+        "type": "aws_dynamodb_table",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n99",
+        "labels": [
+          {
+            "text": "discovery_api_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n100",
+        "labels": [
+          {
+            "text": "discovery_api_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n101",
+        "labels": [
+          {
+            "text": "discovery_api_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n102",
+        "labels": [
+          {
+            "text": "discovery_api_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n103",
+        "labels": [
+          {
+            "text": "discovery_api"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n104",
+        "labels": [
+          {
+            "text": "discovery_container-config_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n105",
+        "labels": [
+          {
+            "text": "discovery_container-config_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n106",
+        "labels": [
+          {
+            "text": "discovery_container-config_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n107",
+        "labels": [
+          {
+            "text": "discovery_container-config_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n108",
+        "labels": [
+          {
+            "text": "discovery_container-config"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n109",
+        "labels": [
+          {
+            "text": "discovery_scheduler_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n110",
+        "labels": [
+          {
+            "text": "discovery_scheduler_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n111",
+        "labels": [
+          {
+            "text": "discovery_scheduler_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n112",
+        "labels": [
+          {
+            "text": "discovery_scheduler_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n113",
+        "labels": [
+          {
+            "text": "discovery_scheduler"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n114",
+        "labels": [
+          {
+            "text": "discovery_legacy-scheduler_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n115",
+        "labels": [
+          {
+            "text": "discovery_legacy-scheduler_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n116",
+        "labels": [
+          {
+            "text": "discovery_legacy-scheduler_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n117",
+        "labels": [
+          {
+            "text": "discovery_legacy-scheduler_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n118",
+        "labels": [
+          {
+            "text": "discovery_legacy-scheduler"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n119",
+        "labels": [
+          {
+            "text": "discovery_publisher_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n120",
+        "labels": [
+          {
+            "text": "discovery_publisher_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n121",
+        "labels": [
+          {
+            "text": "discovery_publisher_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n122",
+        "labels": [
+          {
+            "text": "discovery_publisher_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n123",
+        "labels": [
+          {
+            "text": "discovery_publisher"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n124",
+        "labels": [
+          {
+            "text": "discovery_event-adapter_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n125",
+        "labels": [
+          {
+            "text": "discovery_event-adapter_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n126",
+        "labels": [
+          {
+            "text": "discovery_event-adapter_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n127",
+        "labels": [
+          {
+            "text": "discovery_event-adapter_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n128",
+        "labels": [
+          {
+            "text": "discovery_event-adapter"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n129",
+        "labels": [
+          {
+            "text": "discovery_default-config_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n130",
+        "labels": [
+          {
+            "text": "discovery_default-config_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n131",
+        "labels": [
+          {
+            "text": "discovery_default-config_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n132",
+        "labels": [
+          {
+            "text": "discovery_default-config_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n133",
+        "labels": [
+          {
+            "text": "discovery_default-config"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n134",
+        "labels": [
+          {
+            "text": "discovery_default-config_account_account-topic_sns_invoke_lambda_permission"
+          }
+        ],
+        "type": "aws_lambda_permission",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n135",
+        "labels": [
+          {
+            "text": "discovery_default-config_Sub_account_account-topic"
+          }
+        ],
+        "type": "aws_sns_topic_subscription",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n136",
+        "labels": [
+          {
+            "text": "discovery_diff-tagging_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n137",
+        "labels": [
+          {
+            "text": "discovery_diff-tagging_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n138",
+        "labels": [
+          {
+            "text": "discovery_diff-tagging_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n139",
+        "labels": [
+          {
+            "text": "discovery_diff-tagging_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n140",
+        "labels": [
+          {
+            "text": "discovery_diff-tagging"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n141",
+        "labels": [
+          {
+            "text": "discovery_diff-tagging_EvtMap_discovery_event-bus"
+          }
+        ],
+        "type": "aws_lambda_event_source_mapping",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n142",
+        "labels": [
+          {
+            "text": "discovery_consistency-checker_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n143",
+        "labels": [
+          {
+            "text": "discovery_consistency-checker_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n144",
+        "labels": [
+          {
+            "text": "discovery_consistency-checker_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n145",
+        "labels": [
+          {
+            "text": "discovery_consistency-checker_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n146",
+        "labels": [
+          {
+            "text": "discovery_consistency-checker"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n147",
+        "labels": [
+          {
+            "text": "discovery_machine-types-sync_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n148",
+        "labels": [
+          {
+            "text": "discovery_machine-types-sync_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n149",
+        "labels": [
+          {
+            "text": "discovery_machine-types-sync_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n150",
+        "labels": [
+          {
+            "text": "discovery_machine-types-sync_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n151",
+        "labels": [
+          {
+            "text": "discovery_machine-types-sync"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n152",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-checker_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n153",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-checker_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n154",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-checker_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n155",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-checker_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n156",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-checker"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n157",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-checker_EvtMap_discovery_provider-consistency-checker"
+          }
+        ],
+        "type": "aws_lambda_event_source_mapping",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n158",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-scheduler_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n159",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-scheduler_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n160",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-scheduler_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n161",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-scheduler_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n162",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-scheduler"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n163",
+        "labels": [
+          {
+            "text": "discovery_sqs-replayer_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n164",
+        "labels": [
+          {
+            "text": "discovery_sqs-replayer_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n165",
+        "labels": [
+          {
+            "text": "discovery_sqs-replayer_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n166",
+        "labels": [
+          {
+            "text": "discovery_sqs-replayer_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n167",
+        "labels": [
+          {
+            "text": "discovery_sqs-replayer"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n168",
+        "labels": [
+          {
+            "text": "discovery_decommission_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n169",
+        "labels": [
+          {
+            "text": "discovery_decommission_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n170",
+        "labels": [
+          {
+            "text": "discovery_decommission_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n171",
+        "labels": [
+          {
+            "text": "discovery_decommission_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n172",
+        "labels": [
+          {
+            "text": "discovery_decommission"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n173",
+        "labels": [
+          {
+            "text": "discovery_decommission_account_account-topic_sns_invoke_lambda_permission"
+          }
+        ],
+        "type": "aws_lambda_permission",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n174",
+        "labels": [
+          {
+            "text": "discovery_decommission_Sub_account_account-topic"
+          }
+        ],
+        "type": "aws_sns_topic_subscription",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n175",
+        "labels": [
+          {
+            "text": "discovery_decommission_EvtMap_discovery_decommission-queue"
+          }
+        ],
+        "type": "aws_lambda_event_source_mapping",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n176",
+        "labels": [
+          {
+            "text": "discovery_remediate-missing-resources_role"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n177",
+        "labels": [
+          {
+            "text": "discovery_remediate-missing-resources_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n178",
+        "labels": [
+          {
+            "text": "discovery_remediate-missing-resources_runaway_alarm"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n179",
+        "labels": [
+          {
+            "text": "discovery_remediate-missing-resources_lambda-errors"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n180",
+        "labels": [
+          {
+            "text": "discovery_remediate-missing-resources"
+          }
+        ],
+        "type": "aws_lambda_function",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n181",
+        "labels": [
+          {
+            "text": "discovery_remediate-missing-resources__provider-inconsistency-topic_sns_invoke_lambda_permission"
+          }
+        ],
+        "type": "aws_lambda_permission",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n182",
+        "labels": [
+          {
+            "text": "discovery_remediate-missing-resources_Sub_discovery_provider-inconsistency-topic"
+          }
+        ],
+        "type": "aws_sns_topic_subscription",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n183",
+        "labels": [
+          {
+            "text": "discovery_gateway-invoke-lambda"
+          }
+        ],
+        "type": "aws_iam_role",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n184",
+        "labels": [
+          {
+            "text": "discovery_gateway-invoke-lambda_role_policy"
+          }
+        ],
+        "type": "aws_iam_role_policy",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n185",
+        "labels": [
+          {
+            "text": "discovery"
+          }
+        ],
+        "type": "aws_api_gateway_rest_api",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n186",
+        "labels": [
+          {
+            "text": "discovery_deployment-consistency-checker_resource"
+          }
+        ],
+        "type": "aws_api_gateway_resource",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n187",
+        "labels": [
+          {
+            "text": "discovery_deployment-consistency-checker_resource_proxy"
+          }
+        ],
+        "type": "aws_api_gateway_resource",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n188",
+        "labels": [
+          {
+            "text": "discovery_integration_discovery_deployment-consistency-checker_resource_ANY"
+          }
+        ],
+        "type": "aws_api_gateway_method",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n189",
+        "labels": [
+          {
+            "text": "discovery_integration_discovery_deployment-consistency-checker_resource_ANY_int"
+          }
+        ],
+        "type": "aws_api_gateway_integration",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n190",
+        "labels": [
+          {
+            "text": "discovery_deployment-provider-consistency-checker_resource"
+          }
+        ],
+        "type": "aws_api_gateway_resource",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n191",
+        "labels": [
+          {
+            "text": "discovery_deployment-provider-consistency-checker_resource_proxy"
+          }
+        ],
+        "type": "aws_api_gateway_resource",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n192",
+        "labels": [
+          {
+            "text": "discovery_integration_discovery_deployment-provider-consistency-checker_resource_ANY"
+          }
+        ],
+        "type": "aws_api_gateway_method",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n193",
+        "labels": [
+          {
+            "text": "discovery_integration_discovery_deployment-provider-consistency-checker_resource_ANY_int"
+          }
+        ],
+        "type": "aws_api_gateway_integration",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n194",
+        "labels": [
+          {
+            "text": "discovery_deployment-provider-consistency-scheduler_resource"
+          }
+        ],
+        "type": "aws_api_gateway_resource",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n195",
+        "labels": [
+          {
+            "text": "discovery_deployment-provider-consistency-scheduler_resource_proxy"
+          }
+        ],
+        "type": "aws_api_gateway_resource",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n196",
+        "labels": [
+          {
+            "text": "discovery_integration_discovery_deployment-provider-consistency-scheduler_resource_ANY"
+          }
+        ],
+        "type": "aws_api_gateway_method",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n197",
+        "labels": [
+          {
+            "text": "discovery_integration_discovery_deployment-provider-consistency-scheduler_resource_ANY_int"
+          }
+        ],
+        "type": "aws_api_gateway_integration",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n198",
+        "labels": [
+          {
+            "text": "discovery_deployment-tenants_resource"
+          }
+        ],
+        "type": "aws_api_gateway_resource",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n199",
+        "labels": [
+          {
+            "text": "discovery_deployment-tenants_resource_proxy"
+          }
+        ],
+        "type": "aws_api_gateway_resource",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n200",
+        "labels": [
+          {
+            "text": "discovery_integration_discovery_deployment-tenants_resource_ANY"
+          }
+        ],
+        "type": "aws_api_gateway_method",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n201",
+        "labels": [
+          {
+            "text": "discovery_integration_discovery_deployment-tenants_resource_ANY_int"
+          }
+        ],
+        "type": "aws_api_gateway_integration",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n202",
+        "labels": [
+          {
+            "text": "discovery_deployment-failures_resource"
+          }
+        ],
+        "type": "aws_api_gateway_resource",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n203",
+        "labels": [
+          {
+            "text": "discovery_deployment-failures_resource_proxy"
+          }
+        ],
+        "type": "aws_api_gateway_resource",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n204",
+        "labels": [
+          {
+            "text": "discovery_integration_discovery_deployment-failures_resource_ANY"
+          }
+        ],
+        "type": "aws_api_gateway_method",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n205",
+        "labels": [
+          {
+            "text": "discovery_integration_discovery_deployment-failures_resource_ANY_int"
+          }
+        ],
+        "type": "aws_api_gateway_integration",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n206",
+        "labels": [
+          {
+            "text": "discovery_deployment-suspendedAccounts_resource"
+          }
+        ],
+        "type": "aws_api_gateway_resource",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n207",
+        "labels": [
+          {
+            "text": "discovery_deployment-suspendedAccounts_resource_proxy"
+          }
+        ],
+        "type": "aws_api_gateway_resource",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n208",
+        "labels": [
+          {
+            "text": "discovery_integration_discovery_deployment-suspendedAccounts_resource_ANY"
+          }
+        ],
+        "type": "aws_api_gateway_method",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n209",
+        "labels": [
+          {
+            "text": "discovery_integration_discovery_deployment-suspendedAccounts_resource_ANY_int"
+          }
+        ],
+        "type": "aws_api_gateway_integration",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n210",
+        "labels": [
+          {
+            "text": "discovery_deployment-base-path-mapping"
+          }
+        ],
+        "type": "aws_api_gateway_base_path_mapping",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n211",
+        "labels": [
+          {
+            "text": "discovery_deployment"
+          }
+        ],
+        "type": "aws_api_gateway_deployment",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n212",
+        "labels": [
+          {
+            "text": "discovery_collector-sqs-age"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n213",
+        "labels": [
+          {
+            "text": "discovery_collector-sqs-deadletter-depth"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n214",
+        "labels": [
+          {
+            "text": "discovery_collector-messages-sent-low"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n215",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-sqs-age"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n216",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-sqs-deadletter-depth"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n217",
+        "labels": [
+          {
+            "text": "discovery_publisher-sqs-age"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n218",
+        "labels": [
+          {
+            "text": "discovery_publisher-sqs-deadletter-depth"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n219",
+        "labels": [
+          {
+            "text": "discovery_diff-tagging-iterator-age"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n220",
+        "labels": [
+          {
+            "text": "discovery_diff-tagging-failed-event-error"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n221",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-schema-validation-failures"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n222",
+        "labels": [
+          {
+            "text": "discovery_decommission-failures"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n223",
+        "labels": [
+          {
+            "text": "discovery_decommission-sqs-deadletter-depth"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n224",
+        "labels": [
+          {
+            "text": "discovery_cache-replication-group1"
+          }
+        ],
+        "type": "aws_elasticache_replication_group",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n225",
+        "labels": [
+          {
+            "text": "discovery_cache-replication-group1_elasticache-cpu-utilization-exceeded"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n226",
+        "labels": [
+          {
+            "text": "discovery_cache-replication-group1_elasticache-engine-cpu-utilization-exceeded"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n227",
+        "labels": [
+          {
+            "text": "discovery_cache-replication-group1_elasticache-swap-usage"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n228",
+        "labels": [
+          {
+            "text": "discovery_cache-replication-group1_elasticache-evictions"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n229",
+        "labels": [
+          {
+            "text": "discovery_cache-replication-group1_elasticache-curr-connections"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n230",
+        "labels": [
+          {
+            "text": "discovery_master-key-alias"
+          }
+        ],
+        "type": "aws_kms_alias",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n231",
+        "labels": [
+          {
+            "text": "discovery_master-key"
+          }
+        ],
+        "type": "aws_kms_key",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n232",
+        "labels": [
+          {
+            "text": "discovery_agents"
+          }
+        ],
+        "type": "aws_cloudwatch_log_group",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n233",
+        "labels": [
+          {
+            "text": "acp-platform-s-discovery-sandbox1-discovery_event-adapter_permission"
+          }
+        ],
+        "type": "aws_lambda_permission",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n234",
+        "labels": [
+          {
+            "text": "discovery_bucket-notification"
+          }
+        ],
+        "type": "aws_s3_bucket_notification",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n235",
+        "labels": [
+          {
+            "text": "discovery_event-bus"
+          }
+        ],
+        "type": "aws_kinesis_stream",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n236",
+        "labels": [
+          {
+            "text": "discovery_event-bus_kinesis-readexceeded"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n237",
+        "labels": [
+          {
+            "text": "discovery_event-bus_kinesis-writeexceeded"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n238",
+        "labels": [
+          {
+            "text": "discovery_event-bus_kinesis-iteratoragemilliseconds"
+          }
+        ],
+        "type": "aws_cloudwatch_metric_alarm",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n239",
+        "labels": [
+          {
+            "text": "discovery_scheduler-rule_target"
+          }
+        ],
+        "type": "aws_cloudwatch_event_target",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n240",
+        "labels": [
+          {
+            "text": "discovery_scheduler-rule"
+          }
+        ],
+        "type": "aws_cloudwatch_event_rule",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n241",
+        "labels": [
+          {
+            "text": "discovery_scheduler-rule_invoke"
+          }
+        ],
+        "type": "aws_lambda_permission",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n242",
+        "labels": [
+          {
+            "text": "discovery_legacy-scheduler-rule_target"
+          }
+        ],
+        "type": "aws_cloudwatch_event_target",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n243",
+        "labels": [
+          {
+            "text": "discovery_legacy-scheduler-rule"
+          }
+        ],
+        "type": "aws_cloudwatch_event_rule",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n244",
+        "labels": [
+          {
+            "text": "discovery_legacy-scheduler-rule_invoke"
+          }
+        ],
+        "type": "aws_lambda_permission",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n245",
+        "labels": [
+          {
+            "text": "discovery_machine-types-sync-rule_target"
+          }
+        ],
+        "type": "aws_cloudwatch_event_target",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n246",
+        "labels": [
+          {
+            "text": "discovery_machine-types-sync-rule"
+          }
+        ],
+        "type": "aws_cloudwatch_event_rule",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n247",
+        "labels": [
+          {
+            "text": "discovery_machine-types-sync-rule_invoke"
+          }
+        ],
+        "type": "aws_lambda_permission",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n248",
+        "labels": [
+          {
+            "text": "discovery_consistency-checker-scheduler-rule_target"
+          }
+        ],
+        "type": "aws_cloudwatch_event_target",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n249",
+        "labels": [
+          {
+            "text": "discovery_consistency-checker-scheduler-rule"
+          }
+        ],
+        "type": "aws_cloudwatch_event_rule",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n250",
+        "labels": [
+          {
+            "text": "discovery_consistency-checker-scheduler-rule_invoke"
+          }
+        ],
+        "type": "aws_lambda_permission",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n251",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-scheduler-rule_target"
+          }
+        ],
+        "type": "aws_cloudwatch_event_target",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n252",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-scheduler-rule"
+          }
+        ],
+        "type": "aws_cloudwatch_event_rule",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n253",
+        "labels": [
+          {
+            "text": "discovery_provider-consistency-scheduler-rule_invoke"
+          }
+        ],
+        "type": "aws_lambda_permission",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n254",
+        "labels": [
+          {
+            "text": "discovery_diff-engine-schema-validation-fails"
+          }
+        ],
+        "type": "aws_cloudwatch_log_metric_filter",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n255",
+        "labels": [
+          {
+            "text": "discovery_cpsc-vmware-config"
+          }
+        ],
+        "type": "aws_s3_bucket_object",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n256",
+        "labels": [
+          {
+            "text": "discovery_cpsc-resource-group-config"
+          }
+        ],
+        "type": "aws_s3_bucket_object",
+        "width": 45,
+        "height": 45
+      },
+      {
+        "id": "n257",
+        "labels": [
+          {
+            "text": "discovery_cpsc-resource-tag-config"
+          }
+        ],
+        "type": "aws_s3_bucket_object",
+        "width": 45,
+        "height": 45
+      }
+    ],
+    "edges": [
+      {
+        "id": "e0",
+        "sources": [
+          "n64"
+        ],
+        "targets": [
+          "n123"
+        ]
+      },
+      {
+        "id": "e1",
+        "sources": [
+          "n65"
+        ],
+        "targets": [
+          "n146"
+        ]
+      },
+      {
+        "id": "e2",
+        "sources": [
+          "n57"
+        ],
+        "targets": [
+          "n62"
+        ]
+      },
+      {
+        "id": "e3",
+        "sources": [
+          "n57"
+        ],
+        "targets": [
+          "n70"
+        ]
+      },
+      {
+        "id": "e4",
+        "sources": [
+          "n57"
+        ],
+        "targets": [
+          "n89"
+        ]
+      },
+      {
+        "id": "e5",
+        "sources": [
+          "n57"
+        ],
+        "targets": [
+          "n74"
+        ]
+      },
+      {
+        "id": "e6",
+        "sources": [
+          "n57"
+        ],
+        "targets": [
+          "n231"
+        ]
+      },
+      {
+        "id": "e7",
+        "sources": [
+          "n59"
+        ],
+        "targets": [
+          "n63"
+        ]
+      },
+      {
+        "id": "e8",
+        "sources": [
+          "n59"
+        ],
+        "targets": [
+          "n71"
+        ]
+      },
+      {
+        "id": "e9",
+        "sources": [
+          "n59"
+        ],
+        "targets": [
+          "n80"
+        ]
+      },
+      {
+        "id": "e10",
+        "sources": [
+          "n59"
+        ],
+        "targets": [
+          "n231"
+        ]
+      },
+      {
+        "id": "e11",
+        "sources": [
+          "n99"
+        ],
+        "targets": [
+          "n89"
+        ]
+      },
+      {
+        "id": "e12",
+        "sources": [
+          "n103"
+        ],
+        "targets": [
+          "n99"
+        ]
+      },
+      {
+        "id": "e13",
+        "sources": [
+          "n108"
+        ],
+        "targets": [
+          "n104"
+        ]
+      },
+      {
+        "id": "e14",
+        "sources": [
+          "n109"
+        ],
+        "targets": [
+          "n92"
+        ]
+      },
+      {
+        "id": "e15",
+        "sources": [
+          "n109"
+        ],
+        "targets": [
+          "n89"
+        ]
+      },
+      {
+        "id": "e16",
+        "sources": [
+          "n109"
+        ],
+        "targets": [
+          "n89"
+        ]
+      },
+      {
+        "id": "e17",
+        "sources": [
+          "n109"
+        ],
+        "targets": [
+          "n74"
+        ]
+      },
+      {
+        "id": "e18",
+        "sources": [
+          "n113"
+        ],
+        "targets": [
+          "n109"
+        ]
+      },
+      {
+        "id": "e19",
+        "sources": [
+          "n114"
+        ],
+        "targets": [
+          "n92"
+        ]
+      },
+      {
+        "id": "e20",
+        "sources": [
+          "n114"
+        ],
+        "targets": [
+          "n89"
+        ]
+      },
+      {
+        "id": "e21",
+        "sources": [
+          "n114"
+        ],
+        "targets": [
+          "n74"
+        ]
+      },
+      {
+        "id": "e22",
+        "sources": [
+          "n118"
+        ],
+        "targets": [
+          "n114"
+        ]
+      },
+      {
+        "id": "e23",
+        "sources": [
+          "n119"
+        ],
+        "targets": [
+          "n64"
+        ]
+      },
+      {
+        "id": "e24",
+        "sources": [
+          "n119"
+        ],
+        "targets": [
+          "n72"
+        ]
+      },
+      {
+        "id": "e25",
+        "sources": [
+          "n119"
+        ],
+        "targets": [
+          "n231"
+        ]
+      },
+      {
+        "id": "e26",
+        "sources": [
+          "n119"
+        ],
+        "targets": [
+          "n77"
+        ]
+      },
+      {
+        "id": "e27",
+        "sources": [
+          "n123"
+        ],
+        "targets": [
+          "n119"
+        ]
+      },
+      {
+        "id": "e28",
+        "sources": [
+          "n124"
+        ],
+        "targets": [
+          "n235"
+        ]
+      },
+      {
+        "id": "e29",
+        "sources": [
+          "n124"
+        ],
+        "targets": [
+          "n235"
+        ]
+      },
+      {
+        "id": "e30",
+        "sources": [
+          "n128"
+        ],
+        "targets": [
+          "n124"
+        ]
+      },
+      {
+        "id": "e31",
+        "sources": [
+          "n129"
+        ],
+        "targets": [
+          "n89"
+        ]
+      },
+      {
+        "id": "e32",
+        "sources": [
+          "n133"
+        ],
+        "targets": [
+          "n129"
+        ]
+      },
+      {
+        "id": "e33",
+        "sources": [
+          "n140"
+        ],
+        "targets": [
+          "n136"
+        ]
+      },
+      {
+        "id": "e34",
+        "sources": [
+          "n142"
+        ],
+        "targets": [
+          "n95"
+        ]
+      },
+      {
+        "id": "e35",
+        "sources": [
+          "n142"
+        ],
+        "targets": [
+          "n89"
+        ]
+      },
+      {
+        "id": "e36",
+        "sources": [
+          "n142"
+        ],
+        "targets": [
+          "n98"
+        ]
+      },
+      {
+        "id": "e37",
+        "sources": [
+          "n142"
+        ],
+        "targets": [
+          "n65"
+        ]
+      },
+      {
+        "id": "e38",
+        "sources": [
+          "n142"
+        ],
+        "targets": [
+          "n69"
+        ]
+      },
+      {
+        "id": "e39",
+        "sources": [
+          "n142"
+        ],
+        "targets": [
+          "n231"
+        ]
+      },
+      {
+        "id": "e40",
+        "sources": [
+          "n146"
+        ],
+        "targets": [
+          "n142"
+        ]
+      },
+      {
+        "id": "e41",
+        "sources": [
+          "n147"
+        ],
+        "targets": [
+          "n89"
+        ]
+      },
+      {
+        "id": "e42",
+        "sources": [
+          "n151"
+        ],
+        "targets": [
+          "n147"
+        ]
+      },
+      {
+        "id": "e43",
+        "sources": [
+          "n152"
+        ],
+        "targets": [
+          "n98"
+        ]
+      },
+      {
+        "id": "e44",
+        "sources": [
+          "n152"
+        ],
+        "targets": [
+          "n67"
+        ]
+      },
+      {
+        "id": "e45",
+        "sources": [
+          "n152"
+        ],
+        "targets": [
+          "n68"
+        ]
+      },
+      {
+        "id": "e46",
+        "sources": [
+          "n152"
+        ],
+        "targets": [
+          "n83"
+        ]
+      },
+      {
+        "id": "e47",
+        "sources": [
+          "n152"
+        ],
+        "targets": [
+          "n231"
+        ]
+      },
+      {
+        "id": "e48",
+        "sources": [
+          "n156"
+        ],
+        "targets": [
+          "n152"
+        ]
+      },
+      {
+        "id": "e49",
+        "sources": [
+          "n67"
+        ],
+        "targets": [
+          "n156"
+        ]
+      },
+      {
+        "id": "e50",
+        "sources": [
+          "n158"
+        ],
+        "targets": [
+          "n89"
+        ]
+      },
+      {
+        "id": "e51",
+        "sources": [
+          "n158"
+        ],
+        "targets": [
+          "n98"
+        ]
+      },
+      {
+        "id": "e52",
+        "sources": [
+          "n158"
+        ],
+        "targets": [
+          "n67"
+        ]
+      },
+      {
+        "id": "e53",
+        "sources": [
+          "n158"
+        ],
+        "targets": [
+          "n231"
+        ]
+      },
+      {
+        "id": "e54",
+        "sources": [
+          "n162"
+        ],
+        "targets": [
+          "n158"
+        ]
+      },
+      {
+        "id": "e55",
+        "sources": [
+          "n163"
+        ],
+        "targets": [
+          "n64"
+        ]
+      },
+      {
+        "id": "e56",
+        "sources": [
+          "n163"
+        ],
+        "targets": [
+          "n72"
+        ]
+      },
+      {
+        "id": "e57",
+        "sources": [
+          "n163"
+        ],
+        "targets": [
+          "n231"
+        ]
+      },
+      {
+        "id": "e58",
+        "sources": [
+          "n167"
+        ],
+        "targets": [
+          "n163"
+        ]
+      },
+      {
+        "id": "e59",
+        "sources": [
+          "n168"
+        ],
+        "targets": [
+          "n92"
+        ]
+      },
+      {
+        "id": "e60",
+        "sources": [
+          "n168"
+        ],
+        "targets": [
+          "n66"
+        ]
+      },
+      {
+        "id": "e61",
+        "sources": [
+          "n168"
+        ],
+        "targets": [
+          "n73"
+        ]
+      },
+      {
+        "id": "e62",
+        "sources": [
+          "n168"
+        ],
+        "targets": [
+          "n231"
+        ]
+      },
+      {
+        "id": "e63",
+        "sources": [
+          "n172"
+        ],
+        "targets": [
+          "n168"
+        ]
+      },
+      {
+        "id": "e64",
+        "sources": [
+          "n66"
+        ],
+        "targets": [
+          "n172"
+        ]
+      },
+      {
+        "id": "e65",
+        "sources": [
+          "n176"
+        ],
+        "targets": [
+          "n231"
+        ]
+      },
+      {
+        "id": "e66",
+        "sources": [
+          "n180"
+        ],
+        "targets": [
+          "n176"
+        ]
+      },
+      {
+        "id": "e67",
+        "sources": [
+          "n83"
+        ],
+        "targets": [
+          "n180"
+        ]
+      },
+      {
+        "id": "e68",
+        "sources": [
+          "n183"
+        ],
+        "targets": [
+          "n146"
+        ]
+      },
+      {
+        "id": "e69",
+        "sources": [
+          "n183"
+        ],
+        "targets": [
+          "n156"
+        ]
+      },
+      {
+        "id": "e70",
+        "sources": [
+          "n183"
+        ],
+        "targets": [
+          "n162"
+        ]
+      },
+      {
+        "id": "e71",
+        "sources": [
+          "n183"
+        ],
+        "targets": [
+          "n103"
+        ]
+      },
+      {
+        "id": "e72",
+        "sources": [
+          "n240"
+        ],
+        "targets": [
+          "n113"
+        ]
+      },
+      {
+        "id": "e73",
+        "sources": [
+          "n243"
+        ],
+        "targets": [
+          "n118"
+        ]
+      },
+      {
+        "id": "e74",
+        "sources": [
+          "n246"
+        ],
+        "targets": [
+          "n151"
+        ]
+      },
+      {
+        "id": "e75",
+        "sources": [
+          "n249"
+        ],
+        "targets": [
+          "n146"
+        ]
+      },
+      {
+        "id": "e76",
+        "sources": [
+          "n252"
+        ],
+        "targets": [
+          "n162"
+        ]
+      }
+    ]
+  }
