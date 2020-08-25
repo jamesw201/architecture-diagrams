@@ -11,14 +11,15 @@ function generateNodes(resources) {
     'aws_api_gateway_method', 'aws_api_gateway_resource', 'aws_route_table', 'aws_route', 
     'aws_route_table_association', 'aws_kms_alias', 'aws_flow_log', 'aws_cloudwatch_log_group',
     'aws_iam_policy_document', 'aws_cloudwatch_event_rule', 'aws_cloudwatch_event_target'];
+    // aws_kms_key
 
     const validResources = resources
         .map((resource, idx) => ({
             id: `n${idx}`,
             labels: [{ text: resource.name }],
             type: resource.type,
-            width: 45,
-            height: 45
+            width: 35,
+            height: 35
         }))
         .filter(resource => !invalidResources.includes(resource.type))
 
@@ -93,7 +94,7 @@ export function root() {
     });
 
     const results = roleRelationships.map(mergeRoleRelationships).filter(_=>_);
-    console.log(`results: ${JSON.stringify(results)}`);
+    // console.log(`results: ${JSON.stringify(results)}`);
 
     const emptyResult = { nodesToBeDeleted: [], edgesToBeDeleted: [], newEdges: []}
     const merged = results.reduce((acc, curr) => ({
@@ -102,7 +103,7 @@ export function root() {
         newEdges: [...acc.newEdges, ...curr.newEdges]
     }), emptyResult);
 
-    console.log(`merged: ${JSON.stringify(merged)}`);
+    // console.log(`merged: ${JSON.stringify(merged)}`);
 
     const newNodes = children.filter(child => !merged.nodesToBeDeleted.includes(child.id));
     const newEdges = edges.filter(edge => !merged.edgesToBeDeleted.includes(edge.id));

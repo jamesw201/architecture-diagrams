@@ -1,0 +1,1 @@
+export const darkBrown = "#504746";

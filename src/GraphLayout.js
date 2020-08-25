@@ -37,7 +37,7 @@ function GenerateGraph() {
         // };
 
         const graph = root();
-        return elk.layout(graph)
+        return elk.layout(graph);
     }
 
     return Object.freeze({
