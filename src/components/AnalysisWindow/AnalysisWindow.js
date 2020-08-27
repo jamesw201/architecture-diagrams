@@ -8,6 +8,7 @@ export const AnalysisWindowStyled = styled.div`
     display: grid;
     height: 100%;
     template-grid-rows: 1fr 1fr;
+    grid-row-gap: 390px;
 `;
 
 export function AnalysisWindow() {

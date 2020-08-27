@@ -1,8 +1,11 @@
 import React from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import AceEditor from 'react-ace';
 
-import { graphState } from '../../recoil_store';
+import "ace-builds/src-noconflict/theme-github";
+
+import { graphState, resourceInFocusState } from '../../recoil_store';
 
 export const TabbedMenuStyled = styled.div`
     border-right: 1px solid black;
@@ -10,6 +13,9 @@ export const TabbedMenuStyled = styled.div`
     border-top: 1px solid black;
     display: grid;
     grid-template-rows: 30px auto;
+    margin: 5px;
+    width: 100%;
+    margin-left: 0;
 `;
 
 const MenuItems = styled.div`
@@ -26,15 +32,39 @@ const MenuItem = styled.div`
     background-color: #e6e1e1;
 `;
 
+function extractPolicyResults(graph, resourceInFocus) {
+    if (Object.keys(resourceInFocus).length === 0 || Object.keys(graph).length === 0) {
+        return {};
+    }
+
+    return graph.policy_results[`${resourceInFocus.type}_${resourceInFocus.name}`] || {};
+}
+
 export function TabbedMenu() {
     const graph = useRecoilValue(graphState);
+    const [resourceInFocus, setResourceInFocus] = useRecoilState(resourceInFocusState);
+
+    const policyResults = extractPolicyResults(graph, resourceInFocus);
 
     return <TabbedMenuStyled>
         <MenuItems>
-            <MenuItem>Policy</MenuItem>
+            <MenuItem>Policy Violations</MenuItem>
             <MenuItem>Documentation</MenuItem>
             <MenuItem>SRE</MenuItem>
         </MenuItems>
-        <div>{graph.resources.length}</div>
+        <div>
+            <AceEditor
+                name="policyViolations"
+                mode="json"
+                theme="github"
+                onChange={() => {
+                    /* handler required, do nothing */
+                }}
+                editorProps={{ $blockScrolling: false }}
+                fontSize="13px"
+                height="400px"
+                value={JSON.stringify(policyResults, null, 2)}
+            />
+        </div>
     </TabbedMenuStyled>
 }

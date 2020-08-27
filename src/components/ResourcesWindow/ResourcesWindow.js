@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import AceEditor from 'react-ace';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import "ace-builds/src-noconflict/theme-github";
 
