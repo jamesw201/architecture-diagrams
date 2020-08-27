@@ -6,6 +6,7 @@ import { ResourcesWindow } from '../ResourcesWindow/ResourcesWindow';
 
 export const AnalysisWindowStyled = styled.div`
     display: grid;
+    height: 100%;
     template-grid-rows: 1fr 1fr;
 `;
 

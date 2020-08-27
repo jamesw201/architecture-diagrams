@@ -1,8 +1,10 @@
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import { graphState } from '../../recoil_store';
+
 export const TabbedMenuStyled = styled.div`
-    border-left: 1px solid black;
     border-right: 1px solid black;
     border-bottom: 1px solid black;
     border-top: 1px solid black;
@@ -25,12 +27,14 @@ const MenuItem = styled.div`
 `;
 
 export function TabbedMenu() {
+    const graph = useRecoilValue(graphState);
+
     return <TabbedMenuStyled>
         <MenuItems>
             <MenuItem>Policy</MenuItem>
             <MenuItem>Documentation</MenuItem>
             <MenuItem>SRE</MenuItem>
         </MenuItems>
-        <div></div>
+        <div>{graph.resources.length}</div>
     </TabbedMenuStyled>
 }

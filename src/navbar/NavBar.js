@@ -30,7 +30,7 @@ const Logo = styled(Title)`
 export function NavBar() {
     return <NavBarStyled>
         <Logo>
-            Infrastructure Diagrams
+            Infrastructure Graph
         </Logo>
         <div></div>
         <ControlButtonElem>docs</ControlButtonElem>

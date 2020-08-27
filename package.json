@@ -9,8 +9,10 @@
     "elkjs": "^0.7.0",
     "ramda": "^0.27.1",
     "react": "^16.13.1",
+    "react-ace": "^9.1.3",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
+    "recoil": "0.0.10",
     "styled-components": "^5.1.1",
     "webpack": "4.42.0"
   },

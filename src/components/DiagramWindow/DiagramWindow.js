@@ -1,13 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useRecoilState } from 'recoil';
 
 import { darkBrown } from '../../styles/colours';
 
 import GraphLayout from '../../GraphLayout';
 import D3NodeLayout from '../../D3NodeLayout';
 
+import { graphState, resourceInFocusState } from '../../recoil_store';
+
 export const DiagramWindowStyled = styled.div`
     border-left: 1px solid ${darkBrown};
+    border-right: 1px solid ${darkBrown};
     border-bottom: 1px solid ${darkBrown};
     border-top: 1px solid ${darkBrown};
     
@@ -32,7 +36,7 @@ const ScrollContainer = styled.div`
 `;
 
 
-function canvasClick(nodes, findX, findY) {
+function canvasClick(nodes, findX, findY, graph, setResourceInFocus) {
     const result = nodes.filter(child => {
         const validX = (child.x < findX) && (child.x + child.width > findX);
         const validY = (child.y < findY) && (child.y + child.height > findY);
@@ -41,7 +45,9 @@ function canvasClick(nodes, findX, findY) {
     });
 
     if (result.length > 0) {
-        alert(result[0].labels[0].text);
+        const resource = graph.resources.find(resource => resource.name === result[0].labels[0].text);
+        setResourceInFocus(resource);
+        // alert(result[0].labels[0].text);
     } else {
         alert('not found');
     }
@@ -49,6 +55,8 @@ function canvasClick(nodes, findX, findY) {
 
 
 export function DiagramWindow() {
+    const [graph, setGraph] = useRecoilState(graphState);
+    const [resourceInFocus, setResourceInFocus] = useRecoilState(resourceInFocusState);
     const [layout, setLayout] = React.useState({})
     const canvasRef = React.useRef(null)
 
@@ -78,7 +86,7 @@ export function DiagramWindow() {
                             const rect = canvas.getBoundingClientRect();
                             const x = e.clientX - rect.left;
                             const y = e.clientY - rect.top;
-                            canvasClick(layout.children, x, y);
+                            canvasClick(layout.children, x, y, graph, setResourceInFocus);
                         }}
                     />
                 </LargeContainer>
