@@ -56,7 +56,26 @@ function D3NodeExperiment(ctx, layout) {
         img.src = image64;
 
         // draw the image onto the canvas
-        img.onload = () => ctx.drawImage(img, child.x, child.y, child.width, child.height)
+        img.onload = () => {
+            ctx.drawImage(img, child.x, child.y, child.width, child.height)
+            if (child.violationsCount) {
+                var w = 16;
+                var x = child.x;
+                var y = child.y;
+                ctx.beginPath();
+                ctx.fillStyle = "white";
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgb(200,0,0)';
+                ctx.arc(x, y, w/2, 0, 2 * Math.PI, false);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.font = '8pt Calibri';
+                ctx.fillStyle = 'rgb(200,0,0)';
+                ctx.textAlign = 'center';
+                ctx.fillText(child.violationsCount, x, y+3);
+            }
+        }
         img.onerror = (err) => { throw err }
     }
 

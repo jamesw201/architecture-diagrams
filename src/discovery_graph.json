@@ -9171,55 +9171,23 @@
       }
     ],
     "policy_results": {
-      "aws_lambda_function_discovery_container-config": [
+      "aws_iam_role_policy_discovery_decommission_role_policy": [
         {
           "filters": [
             {
               "filter": {
-                "key": "handler",
+                "key": "visibility_timeout_seconds",
                 "op": "eq",
-                "value": "index.handler"
+                "value": "3.1"
               },
               "result": false
             }
           ],
-          "policy_id": "example-do-policy-name-check",
+          "policy_id": "policy-id-check",
           "policy_result": false
         }
       ],
-      "aws_lambda_function_discovery_default-config": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "handler",
-                "op": "eq",
-                "value": "index.handler"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "example-do-policy-name-check",
-          "policy_result": false
-        }
-      ],
-      "aws_lambda_function_discovery_sqs-replayer": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "handler",
-                "op": "eq",
-                "value": "index.handler"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "example-do-policy-name-check",
-          "policy_result": false
-        }
-      ],
-      "aws_sqs_queue_discovery_decommission-queue": [
+      "aws_sqs_queue_discovery_diff-engine-deadletter-queue": [
         {
           "filters": [
             {
@@ -9233,69 +9201,109 @@
           ],
           "policy_id": "sqs-max-receive-count-check",
           "policy_result": false
-        }
-      ],
-      "aws_iam_role_policy_discovery_vpc-flow-log-policy": [
+        },
         {
           "filters": [
             {
               "filter": {
-                "key": "visibility_timeout_seconds",
+                "key": "policy.Version",
                 "op": "eq",
-                "value": "3.1"
+                "value": "2012-10-17"
               },
               "result": false
             }
           ],
-          "policy_id": "policy-id-check",
+          "policy_id": "sqs-has-inline-policy",
           "policy_result": false
         }
       ],
-      "aws_iam_role_policy_discovery_consistency-checker_role_policy": [
+      "aws_sqs_queue_discovery_publisher-deadletter-queue": [
         {
           "filters": [
             {
               "filter": {
-                "key": "visibility_timeout_seconds",
+                "key": "redrive_policy.maxReceiveCount",
                 "op": "eq",
                 "value": "3.1"
               },
               "result": false
             }
           ],
-          "policy_id": "policy-id-check",
+          "policy_id": "sqs-max-receive-count-check",
+          "policy_result": false
+        },
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "policy.Version",
+                "op": "eq",
+                "value": "2012-10-17"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-has-inline-policy",
           "policy_result": false
         }
       ],
-      "aws_iam_role_policy_discovery_ecs-diff-engine-role_role_policy": [
+      "aws_sqs_queue_discovery_aws-discovery-queue": [
         {
           "filters": [
             {
               "filter": {
-                "key": "visibility_timeout_seconds",
+                "key": "redrive_policy.maxReceiveCount",
                 "op": "eq",
                 "value": "3.1"
               },
               "result": false
             }
           ],
-          "policy_id": "policy-id-check",
+          "policy_id": "sqs-max-receive-count-check",
+          "policy_result": false
+        },
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "policy.Version",
+                "op": "eq",
+                "value": "2012-10-17"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-has-inline-policy",
           "policy_result": false
         }
       ],
-      "aws_iam_role_policy_discovery_provider-consistency-scheduler_role_policy": [
+      "aws_sqs_queue_discovery_provider-consistency-queue": [
         {
           "filters": [
             {
               "filter": {
-                "key": "visibility_timeout_seconds",
+                "key": "redrive_policy.maxReceiveCount",
                 "op": "eq",
                 "value": "3.1"
               },
               "result": false
             }
           ],
-          "policy_id": "policy-id-check",
+          "policy_id": "sqs-max-receive-count-check",
+          "policy_result": false
+        },
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "policy.Version",
+                "op": "eq",
+                "value": "2012-10-17"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-has-inline-policy",
           "policy_result": false
         }
       ],
@@ -9309,9 +9317,17 @@
                 "value": "index.handler"
               },
               "result": false
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": false
             }
           ],
-          "policy_id": "example-do-policy-name-check",
+          "policy_id": "find-nodesjs-lambdas",
           "policy_result": false
         }
       ],
@@ -9331,487 +9347,7 @@
           "policy_result": false
         }
       ],
-      "aws_iam_role_policy_discovery_machine-types-sync_role_policy": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "visibility_timeout_seconds",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "policy-id-check",
-          "policy_result": false
-        }
-      ],
-      "aws_sqs_queue_discovery_collector-queue": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "redrive_policy.maxReceiveCount",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "sqs-max-receive-count-check",
-          "policy_result": false
-        }
-      ],
-      "aws_sqs_queue_discovery_consistency-checker-deadletter-queue": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "redrive_policy.maxReceiveCount",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "sqs-max-receive-count-check",
-          "policy_result": false
-        }
-      ],
-      "aws_iam_role_policy_discovery_container-config_role_policy": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "visibility_timeout_seconds",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "policy-id-check",
-          "policy_result": false
-        }
-      ],
-      "aws_lambda_function_discovery_event-adapter": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "handler",
-                "op": "eq",
-                "value": "index.handler"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "example-do-policy-name-check",
-          "policy_result": false
-        }
-      ],
-      "aws_lambda_function_discovery_remediate-missing-resources": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "handler",
-                "op": "eq",
-                "value": "index.handler"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "example-do-policy-name-check",
-          "policy_result": false
-        }
-      ],
-      "aws_iam_role_policy_discovery_event-adapter_role_policy": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "visibility_timeout_seconds",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "policy-id-check",
-          "policy_result": false
-        }
-      ],
-      "aws_sqs_queue_discovery_consistency-checker-queue": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "redrive_policy.maxReceiveCount",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "sqs-max-receive-count-check",
-          "policy_result": false
-        }
-      ],
-      "aws_sqs_queue_discovery_decommission-deadletter-queue": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "redrive_policy.maxReceiveCount",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "sqs-max-receive-count-check",
-          "policy_result": false
-        }
-      ],
       "aws_iam_role_policy_discovery_default-config_role_policy": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "visibility_timeout_seconds",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "policy-id-check",
-          "policy_result": false
-        }
-      ],
-      "aws_iam_role_policy_discovery_legacy-scheduler_role_policy": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "visibility_timeout_seconds",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "policy-id-check",
-          "policy_result": false
-        }
-      ],
-      "aws_lambda_function_discovery_scheduler": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "handler",
-                "op": "eq",
-                "value": "index.handler"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "example-do-policy-name-check",
-          "policy_result": false
-        }
-      ],
-      "aws_iam_role_policy_discovery_sqs-replayer_role_policy": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "visibility_timeout_seconds",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "policy-id-check",
-          "policy_result": false
-        }
-      ],
-      "aws_lambda_function_discovery_api": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "handler",
-                "op": "eq",
-                "value": "index.handler"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "example-do-policy-name-check",
-          "policy_result": false
-        }
-      ],
-      "aws_lambda_function_discovery_publisher": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "handler",
-                "op": "eq",
-                "value": "index.handler"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "example-do-policy-name-check",
-          "policy_result": false
-        }
-      ],
-      "aws_sqs_queue_discovery_aws-discovery-queue": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "redrive_policy.maxReceiveCount",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "sqs-max-receive-count-check",
-          "policy_result": false
-        }
-      ],
-      "aws_sqs_queue_discovery_provider-consistency-deadletter-queue": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "redrive_policy.maxReceiveCount",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "sqs-max-receive-count-check",
-          "policy_result": false
-        }
-      ],
-      "aws_iam_role_policy_discovery_scheduler_role_policy": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "visibility_timeout_seconds",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "policy-id-check",
-          "policy_result": false
-        }
-      ],
-      "aws_sqs_queue_discovery_diff-engine-queue": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "redrive_policy.maxReceiveCount",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "sqs-max-receive-count-check",
-          "policy_result": false
-        }
-      ],
-      "aws_iam_role_policy_discovery_gateway-invoke-lambda_role_policy": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "visibility_timeout_seconds",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "policy-id-check",
-          "policy_result": false
-        }
-      ],
-      "aws_sqs_queue_discovery_publisher-queue": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "redrive_policy.maxReceiveCount",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "sqs-max-receive-count-check",
-          "policy_result": false
-        }
-      ],
-      "aws_lambda_function_discovery_diff-tagging": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "handler",
-                "op": "eq",
-                "value": "index.handler"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "example-do-policy-name-check",
-          "policy_result": false
-        }
-      ],
-      "aws_sqs_queue_discovery_provider-consistency-queue": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "redrive_policy.maxReceiveCount",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "sqs-max-receive-count-check",
-          "policy_result": false
-        }
-      ],
-      "aws_sqs_queue_discovery_diff-engine-deadletter-queue": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "redrive_policy.maxReceiveCount",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "sqs-max-receive-count-check",
-          "policy_result": false
-        }
-      ],
-      "aws_lambda_function_discovery_decommission": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "handler",
-                "op": "eq",
-                "value": "index.handler"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "example-do-policy-name-check",
-          "policy_result": false
-        }
-      ],
-      "aws_iam_role_policy_discovery_api_role_policy": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "visibility_timeout_seconds",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "policy-id-check",
-          "policy_result": false
-        }
-      ],
-      "aws_sqs_queue_discovery_collector-deadletter-queue": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "redrive_policy.maxReceiveCount",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "sqs-max-receive-count-check",
-          "policy_result": false
-        }
-      ],
-      "aws_iam_role_policy_discovery_remediate-missing-resources_role_policy": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "visibility_timeout_seconds",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "policy-id-check",
-          "policy_result": false
-        }
-      ],
-      "aws_iam_role_policy_discovery_decommission_role_policy": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "visibility_timeout_seconds",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "policy-id-check",
-          "policy_result": false
-        }
-      ],
-      "aws_iam_role_policy_discovery_provider-consistency-checker_role_policy": [
-        {
-          "filters": [
-            {
-              "filter": {
-                "key": "visibility_timeout_seconds",
-                "op": "eq",
-                "value": "3.1"
-              },
-              "result": false
-            }
-          ],
-          "policy_id": "policy-id-check",
-          "policy_result": false
-        }
-      ],
-      "aws_iam_role_policy_discovery_ecs-collector-role_role_policy": [
         {
           "filters": [
             {
@@ -9843,7 +9379,77 @@
           "policy_result": false
         }
       ],
-      "aws_sqs_queue_discovery_publisher-deadletter-queue": [
+      "aws_sqs_queue_discovery_decommission-queue": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "redrive_policy.maxReceiveCount",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-max-receive-count-check",
+          "policy_result": false
+        },
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "policy.Version",
+                "op": "eq",
+                "value": "2012-10-17"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-has-inline-policy",
+          "policy_result": false
+        }
+      ],
+      "aws_iam_role_policy_discovery_gateway-invoke-lambda_role_policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
+      ],
+      "aws_lambda_function_discovery_provider-consistency-scheduler": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "handler",
+                "op": "eq",
+                "value": "index.handler"
+              },
+              "result": true
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "find-nodesjs-lambdas",
+          "policy_result": false
+        }
+      ],
+      "aws_sqs_queue_discovery_diff-engine-queue": [
         {
           "filters": [
             {
@@ -9858,6 +9464,710 @@
           "policy_id": "sqs-max-receive-count-check",
           "policy_result": false
         }
+      ],
+      "aws_iam_role_policy_discovery_consistency-checker_role_policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
+      ],
+      "aws_lambda_function_discovery_sqs-replayer": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "handler",
+                "op": "eq",
+                "value": "index.handler"
+              },
+              "result": false
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "find-nodesjs-lambdas",
+          "policy_result": false
+        }
+      ],
+      "aws_lambda_function_discovery_decommission": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "handler",
+                "op": "eq",
+                "value": "index.handler"
+              },
+              "result": false
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "find-nodesjs-lambdas",
+          "policy_result": false
+        }
+      ],
+      "aws_lambda_function_discovery_default-config": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "handler",
+                "op": "eq",
+                "value": "index.handler"
+              },
+              "result": false
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": true
+            }
+          ],
+          "policy_id": "find-nodesjs-lambdas",
+          "policy_result": false
+        }
+      ],
+      "aws_lambda_function_discovery_container-config": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "handler",
+                "op": "eq",
+                "value": "index.handler"
+              },
+              "result": false
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "find-nodesjs-lambdas",
+          "policy_result": false
+        }
+      ],
+      "aws_iam_role_policy_discovery_scheduler_role_policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
+      ],
+      "aws_lambda_function_discovery_diff-tagging": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "handler",
+                "op": "eq",
+                "value": "index.handler"
+              },
+              "result": false
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "find-nodesjs-lambdas",
+          "policy_result": false
+        }
+      ],
+      "aws_sqs_queue_discovery_decommission-deadletter-queue": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "redrive_policy.maxReceiveCount",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-max-receive-count-check",
+          "policy_result": false
+        },
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "policy.Version",
+                "op": "eq",
+                "value": "2012-10-17"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-has-inline-policy",
+          "policy_result": false
+        }
+      ],
+      "aws_iam_role_policy_discovery_event-adapter_role_policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
+      ],
+      "aws_lambda_function_discovery_api": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "handler",
+                "op": "eq",
+                "value": "index.handler"
+              },
+              "result": false
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "find-nodesjs-lambdas",
+          "policy_result": false
+        }
+      ],
+      "aws_sqs_queue_discovery_publisher-queue": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "redrive_policy.maxReceiveCount",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-max-receive-count-check",
+          "policy_result": false
+        }
+      ],
+      "aws_lambda_function_discovery_consistency-checker": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "handler",
+                "op": "eq",
+                "value": "index.handler"
+              },
+              "result": true
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "find-nodesjs-lambdas",
+          "policy_result": false
+        }
+      ],
+      "aws_lambda_function_discovery_event-adapter": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "handler",
+                "op": "eq",
+                "value": "index.handler"
+              },
+              "result": false
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "find-nodesjs-lambdas",
+          "policy_result": false
+        }
+      ],
+      "aws_lambda_function_discovery_scheduler": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "handler",
+                "op": "eq",
+                "value": "index.handler"
+              },
+              "result": false
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "find-nodesjs-lambdas",
+          "policy_result": false
+        }
+      ],
+      "aws_lambda_function_discovery_provider-consistency-checker": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "handler",
+                "op": "eq",
+                "value": "index.handler"
+              },
+              "result": true
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "find-nodesjs-lambdas",
+          "policy_result": false
+        }
+      ],
+      "aws_iam_role_policy_discovery_api_role_policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
+      ],
+      "aws_lambda_function_discovery_machine-types-sync": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "handler",
+                "op": "eq",
+                "value": "index.handler"
+              },
+              "result": true
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "find-nodesjs-lambdas",
+          "policy_result": false
+        }
+      ],
+      "aws_iam_role_policy_discovery_machine-types-sync_role_policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
+      ],
+      "aws_iam_role_policy_discovery_ecs-diff-engine-role_role_policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
+      ],
+      "aws_iam_role_policy_discovery_provider-consistency-checker_role_policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
+      ],
+      "aws_sqs_queue_discovery_consistency-checker-deadletter-queue": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "redrive_policy.maxReceiveCount",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-max-receive-count-check",
+          "policy_result": false
+        },
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "policy.Version",
+                "op": "eq",
+                "value": "2012-10-17"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-has-inline-policy",
+          "policy_result": false
+        }
+      ],
+      "aws_sqs_queue_discovery_collector-deadletter-queue": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "redrive_policy.maxReceiveCount",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-max-receive-count-check",
+          "policy_result": false
+        },
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "policy.Version",
+                "op": "eq",
+                "value": "2012-10-17"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-has-inline-policy",
+          "policy_result": false
+        }
+      ],
+      "aws_iam_role_policy_discovery_provider-consistency-scheduler_role_policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
+      ],
+      "aws_iam_role_policy_discovery_remediate-missing-resources_role_policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
+      ],
+      "aws_sqs_queue_discovery_collector-queue": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "redrive_policy.maxReceiveCount",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-max-receive-count-check",
+          "policy_result": false
+        }
+      ],
+      "aws_sqs_queue_discovery_consistency-checker-queue": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "redrive_policy.maxReceiveCount",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-max-receive-count-check",
+          "policy_result": false
+        }
+      ],
+      "aws_iam_role_policy_discovery_vpc-flow-log-policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
+      ],
+      "aws_sqs_queue_discovery_provider-consistency-deadletter-queue": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "redrive_policy.maxReceiveCount",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-max-receive-count-check",
+          "policy_result": false
+        },
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "policy.Version",
+                "op": "eq",
+                "value": "2012-10-17"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "sqs-has-inline-policy",
+          "policy_result": false
+        }
+      ],
+      "aws_iam_role_policy_discovery_legacy-scheduler_role_policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
+      ],
+      "aws_lambda_function_discovery_publisher": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "handler",
+                "op": "eq",
+                "value": "index.handler"
+              },
+              "result": false
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "find-nodesjs-lambdas",
+          "policy_result": false
+        }
+      ],
+      "aws_iam_role_policy_discovery_sqs-replayer_role_policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
+      ],
+      "aws_iam_role_policy_discovery_container-config_role_policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
+      ],
+      "aws_lambda_function_discovery_remediate-missing-resources": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "handler",
+                "op": "eq",
+                "value": "index.handler"
+              },
+              "result": false
+            },
+            {
+              "filter": {
+                "key": "memory_size",
+                "op": "eq",
+                "value": "128.0"
+              },
+              "result": true
+            }
+          ],
+          "policy_id": "find-nodesjs-lambdas",
+          "policy_result": false
+        }
+      ],
+      "aws_iam_role_policy_discovery_ecs-collector-role_role_policy": [
+        {
+          "filters": [
+            {
+              "filter": {
+                "key": "visibility_timeout_seconds",
+                "op": "eq",
+                "value": "3.1"
+              },
+              "result": false
+            }
+          ],
+          "policy_id": "policy-id-check",
+          "policy_result": false
+        }
       ]
     }
-}
+  }

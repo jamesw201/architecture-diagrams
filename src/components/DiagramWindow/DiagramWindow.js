@@ -6,6 +6,7 @@ import { darkBrown } from '../../styles/colours';
 
 import GraphLayout from '../../GraphLayout';
 import D3NodeLayout from '../../D3NodeLayout';
+import GraphAnnotator from '../../GraphAnnotator';
 
 import { graphState, resourceInFocusState } from '../../recoil_store';
 
@@ -64,14 +65,17 @@ export function DiagramWindow() {
         const canvas = canvasRef.current
         const ctx = canvas.getContext('2d')
 
-        GraphLayout().generate()
-            .then((res: Graph) => {
-                setLayout(res)
-
-                const nodeLayout = D3NodeLayout(ctx, res);
-                nodeLayout.drawOnCanvas()
-            })
-    }, [])
+        if (graph.resources.length > 0) {
+            GraphLayout().generate()
+                .then((elkGraph: Graph) => {
+                    setLayout(elkGraph)
+    
+                    const annotatedGraph = GraphAnnotator(graph, elkGraph).annotate();
+                    const nodeLayout = D3NodeLayout(ctx, annotatedGraph);
+                    nodeLayout.drawOnCanvas()
+                })
+        }
+    }, [graph])
 
     return (
         <DiagramWindowStyled>

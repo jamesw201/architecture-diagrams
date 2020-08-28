@@ -29,7 +29,7 @@ const MenuItem = styled.div`
     padding-top: 4px;
     padding-left: 4px;
     place-content: center;
-    background-color: #e6e1e1;
+    background-color: white;
 `;
 
 function extractPolicyResults(graph, resourceInFocus) {
