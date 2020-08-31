@@ -6,7 +6,7 @@ const elk = new ELK({
     defaultLayoutOptions: {
         'elk.algorithm': 'layered',
         'elk.direction': 'RIGHT',
-        'elk.spacing.componentComponent': 275,
+        'elk.spacing.componentComponent': 105,
         'elk.layered.spacing.nodeNodeBetweenLayers': 210,
         'elk.edgeLabels.inline': true,
         'elk.nodeLabels.placement': 'V_BOTTOM',
@@ -15,7 +15,7 @@ const elk = new ELK({
     }
 })
 
-function GenerateGraph() {
+function GenerateGraph(data) {
     function generate()  {
         // const graph = {
         //     id: 'root',
@@ -36,7 +36,7 @@ function GenerateGraph() {
         //     ]
         // };
 
-        const graph = root();
+        const graph = root(data);
         return elk.layout(graph);
     }
 

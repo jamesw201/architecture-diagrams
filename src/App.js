@@ -5,9 +5,10 @@ import { GlobalStyle } from './styles/GlobalStyles';
 
 import { graphState } from './recoil_store';
 import { NavBar } from './navbar/NavBar';
+import { FilePickerBar } from './FilePicker/FilePicker';
 import { Page } from './components/page/Page';
 
-import data from './discovery_graph.json';
+import data from './graphs/policy_graph.json';
 
 const AppStyle = styled.div`
     display: grid;
@@ -25,6 +26,7 @@ function App() {
         <AppStyle>
             <GlobalStyle />
             <NavBar />
+            <FilePickerBar />
             <Page />
         </AppStyle>
     )

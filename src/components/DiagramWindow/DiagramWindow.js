@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { darkBrown } from '../../styles/colours';
+import { navBarColour } from '../../styles/colours';
 
 import GraphLayout from '../../GraphLayout';
 import D3NodeLayout from '../../D3NodeLayout';
@@ -11,10 +11,9 @@ import GraphAnnotator from '../../GraphAnnotator';
 import { graphState, resourceInFocusState } from '../../recoil_store';
 
 export const DiagramWindowStyled = styled.div`
-    border-left: 1px solid ${darkBrown};
-    border-right: 1px solid ${darkBrown};
-    border-bottom: 1px solid ${darkBrown};
-    border-top: 1px solid ${darkBrown};
+    border-left: 1px solid ${navBarColour};
+    border-right: 1px solid ${navBarColour};
+    border-bottom: 1px solid ${navBarColour};
     
     margin: 0;
     padding: 0;
@@ -31,7 +30,7 @@ const LargeContainer = styled.div`
 `;
 
 const ScrollContainer = styled.div`
-    width: calc(100% - 22px);
+    width: calc(100%);
     height: calc(100vh - 22px);
     overflow: auto;
 `;
@@ -56,7 +55,7 @@ function canvasClick(nodes, findX, findY, graph, setResourceInFocus) {
 
 
 export function DiagramWindow() {
-    const [graph, setGraph] = useRecoilState(graphState);
+    const graph = useRecoilValue(graphState);
     const [resourceInFocus, setResourceInFocus] = useRecoilState(resourceInFocusState);
     const [layout, setLayout] = React.useState({})
     const canvasRef = React.useRef(null)
@@ -66,7 +65,7 @@ export function DiagramWindow() {
         const ctx = canvas.getContext('2d')
 
         if (graph.resources.length > 0) {
-            GraphLayout().generate()
+            GraphLayout(graph).generate()
                 .then((elkGraph: Graph) => {
                     setLayout(elkGraph)
     
@@ -83,7 +82,7 @@ export function DiagramWindow() {
                 <LargeContainer>
                     <canvas
                         ref={canvasRef}
-                        width={layout.width}
+                        width={layout.width+300+"px"}
                         height={layout.height}
                         onClick={e => {
                             const canvas = canvasRef.current;

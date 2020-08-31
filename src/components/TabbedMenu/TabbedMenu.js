@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import AceEditor from 'react-ace';
 
@@ -42,7 +42,7 @@ function extractPolicyResults(graph, resourceInFocus) {
 
 export function TabbedMenu() {
     const graph = useRecoilValue(graphState);
-    const [resourceInFocus, setResourceInFocus] = useRecoilState(resourceInFocusState);
+    const resourceInFocus = useRecoilValue(resourceInFocusState);
 
     const policyResults = extractPolicyResults(graph, resourceInFocus);
 

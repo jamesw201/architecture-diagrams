@@ -1,0 +1,4257 @@
+{
+    "resources": [
+        {
+            "type": "provider",
+            "name": "aws",
+            "body": {
+                "region": "us-east-1",
+                "shared_credentials_file": "/Users/james.n.wilson/.aws/credentials",
+                "profile": "sandbox1"
+            }
+        },
+        {
+            "type": "terraform",
+            "body": {
+                "required_version": "= 0.11.2",
+                "backend": {
+                    "type": "inner",
+                    "name": "s3",
+                    "body": {
+                        "bucket": "acp-platform-s-inventory-sandbox1",
+                        "key": "infrastructure/terraform.tfstate",
+                        "region": "us-east-1"
+                    }
+                }
+            }
+        },
+        {
+            "type": "terraform_remote_state",
+            "name": "acp-platform-s-inventory-sandbox1_remote_state",
+            "body": {
+                "config": {
+                    "bucket": "acp-platform-s-inventory-sandbox1",
+                    "key": "infrastructure/terraform.tfstate",
+                    "region": "us-east-1"
+                },
+                "backend": "s3"
+            }
+        },
+        {
+            "type": "aws_kms_key",
+            "name": "inventory_master-key",
+            "body": {
+                "description": "Master key used for encrypting inventory cluster",
+                "enable_key_rotation": "true",
+                "lifecycle": {
+                    "prevent_destroy": "true"
+                }
+            }
+        },
+        {
+            "type": "aws_sqs_queue",
+            "name": "inventory_move-s3-prefixes-deadletter-queue",
+            "body": {
+                "lifecycle": {
+                    "prevent_destroy": "true"
+                },
+                "name": "inventory_move-s3-prefixes-deadletter-queue",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_move-s3-prefixes-deadletter-queue",
+                    "CreatedBy": "Platform.S create-infra.py"
+                }
+            }
+        },
+        {
+            "type": "aws_sqs_queue",
+            "name": "inventory_move-s3-prefixes-queue",
+            "body": {
+                "name": "inventory_move-s3-prefixes-queue",
+                "lifecycle": {
+                    "prevent_destroy": "true"
+                },
+                "message_retention_seconds": "5400.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_move-s3-prefixes-queue",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "visibility_timeout_seconds": "900.0",
+                "redrive_policy": {
+                    "deadLetterTargetArn": "${aws_sqs_queue.inventory_move-s3-prefixes-deadletter-queue.arn}",
+                    "maxReceiveCount": "2.0"
+                }
+            }
+        },
+        {
+            "type": "aws_sns_topic",
+            "name": "inventory_outbound-event-topic",
+            "body": {
+                "name": "inventory_outbound-event-topic"
+            }
+        },
+        {
+            "type": "aws_sns_topic",
+            "name": "inventory_alarm-topic-sandbox1",
+            "body": {
+                "name": "inventory_alarm-topic-sandbox1"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_history_ReadThrottleEvents_capacityAlarm",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual tables ReadThrottleEvents",
+                "period": "60.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "TableName": "inventory_history"
+                },
+                "alarm_name": "inventory_history_ReadThrottleEvents_capacityAlarm",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_history_ReadThrottleEvents_capacityAlarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "ReadThrottleEvents",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/DynamoDB",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_history_WriteThrottleEvents_capacityAlarm",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual tables WriteThrottleEvents",
+                "period": "60.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "TableName": "inventory_history"
+                },
+                "alarm_name": "inventory_history_WriteThrottleEvents_capacityAlarm",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_history_WriteThrottleEvents_capacityAlarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "WriteThrottleEvents",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/DynamoDB",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_dynamodb_table",
+            "name": "inventory_history",
+            "body": {
+                "point_in_time_recovery": {
+                    "enabled": "true"
+                },
+                "read_capacity": "5.0",
+                "range_key": "Timestamp",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_history",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "write_capacity": "5.0",
+                "hash_key": "EventId",
+                "name": "inventory_history",
+                "lifecycle": {
+                    "prevent_destroy": "true"
+                },
+                "stream_view_type": "NEW_AND_OLD_IMAGES",
+                "global_secondary_index": {
+                    "name": "TenantEvents",
+                    "hash_key": "TenantId",
+                    "range_key": "Timestamp",
+                    "projection_type": "ALL",
+                    "write_capacity": "1.0",
+                    "read_capacity": "1.0"
+                },
+                "attribute": {
+                    "name": "AccountId",
+                    "type": "S"
+                },
+                "stream_enabled": "true"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_latest_ReadThrottleEvents_capacityAlarm",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual tables ReadThrottleEvents",
+                "period": "60.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "TableName": "inventory_latest"
+                },
+                "alarm_name": "inventory_latest_ReadThrottleEvents_capacityAlarm",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_latest_ReadThrottleEvents_capacityAlarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "ReadThrottleEvents",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/DynamoDB",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_latest_WriteThrottleEvents_capacityAlarm",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual tables WriteThrottleEvents",
+                "period": "60.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "TableName": "inventory_latest"
+                },
+                "alarm_name": "inventory_latest_WriteThrottleEvents_capacityAlarm",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_latest_WriteThrottleEvents_capacityAlarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "WriteThrottleEvents",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/DynamoDB",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_dynamodb_table",
+            "name": "inventory_latest",
+            "body": {
+                "point_in_time_recovery": {
+                    "enabled": "true"
+                },
+                "read_capacity": "5.0",
+                "range_key": "ResourceId",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_latest",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "write_capacity": "5.0",
+                "hash_key": "AccountId",
+                "name": "inventory_latest",
+                "lifecycle": {
+                    "prevent_destroy": "true"
+                },
+                "stream_view_type": "NEW_AND_OLD_IMAGES",
+                "global_secondary_index": {
+                    "name": "ProjectInventory",
+                    "hash_key": "ProjectId",
+                    "range_key": "ResourceId",
+                    "projection_type": "ALL",
+                    "write_capacity": "1.0",
+                    "read_capacity": "1.0"
+                },
+                "attribute": {
+                    "name": "ProjectId",
+                    "type": "S"
+                },
+                "stream_enabled": "true"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_user-query_ReadThrottleEvents_capacityAlarm",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual tables ReadThrottleEvents",
+                "period": "60.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "TableName": "inventory_user-query"
+                },
+                "alarm_name": "inventory_user-query_ReadThrottleEvents_capacityAlarm",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_user-query_ReadThrottleEvents_capacityAlarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "ReadThrottleEvents",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/DynamoDB",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_user-query_WriteThrottleEvents_capacityAlarm",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual tables WriteThrottleEvents",
+                "period": "60.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "TableName": "inventory_user-query"
+                },
+                "alarm_name": "inventory_user-query_WriteThrottleEvents_capacityAlarm",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_user-query_WriteThrottleEvents_capacityAlarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "WriteThrottleEvents",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/DynamoDB",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_dynamodb_table",
+            "name": "inventory_user-query",
+            "body": {
+                "point_in_time_recovery": {
+                    "enabled": "true"
+                },
+                "read_capacity": "5.0",
+                "range_key": "id",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_user-query",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "write_capacity": "5.0",
+                "hash_key": "tenantId",
+                "name": "inventory_user-query",
+                "lifecycle": {
+                    "prevent_destroy": "false"
+                },
+                "stream_view_type": "NEW_AND_OLD_IMAGES",
+                "attribute": {
+                    "name": "id",
+                    "type": "S"
+                },
+                "stream_enabled": "true"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_group_ReadThrottleEvents_capacityAlarm",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual tables ReadThrottleEvents",
+                "period": "60.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "TableName": "inventory_group"
+                },
+                "alarm_name": "inventory_group_ReadThrottleEvents_capacityAlarm",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_group_ReadThrottleEvents_capacityAlarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "ReadThrottleEvents",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/DynamoDB",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_group_WriteThrottleEvents_capacityAlarm",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual tables WriteThrottleEvents",
+                "period": "60.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "TableName": "inventory_group"
+                },
+                "alarm_name": "inventory_group_WriteThrottleEvents_capacityAlarm",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_group_WriteThrottleEvents_capacityAlarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "WriteThrottleEvents",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/DynamoDB",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_dynamodb_table",
+            "name": "inventory_group",
+            "body": {
+                "point_in_time_recovery": {
+                    "enabled": "true"
+                },
+                "read_capacity": "5.0",
+                "range_key": "ResourceGroupId",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_group",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "write_capacity": "5.0",
+                "hash_key": "TenantId",
+                "name": "inventory_group",
+                "lifecycle": {
+                    "prevent_destroy": "true"
+                },
+                "stream_view_type": "NEW_AND_OLD_IMAGES",
+                "global_secondary_index": {
+                    "name": "TenantAccount",
+                    "hash_key": "TenantId",
+                    "range_key": "AccountId",
+                    "projection_type": "ALL",
+                    "write_capacity": "1.0",
+                    "read_capacity": "1.0"
+                },
+                "attribute": {
+                    "name": "ProjectId",
+                    "type": "S"
+                },
+                "stream_enabled": "true"
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "inventory_event-router_role",
+            "body": {
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "name": "inventory_event-router_role",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-router_role",
+                    "CreatedBy": "Platform.S create-infra.py"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "inventory_event-router_role_policy",
+            "body": {
+                "depends_on": [
+                    "aws_iam_role.inventory_event-router_role"
+                ],
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*inventory_event-router*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "dynamodb:GetRecords",
+                                "dynamodb:GetShardIterator",
+                                "dynamodb:DescribeStream",
+                                "dynamodb:ListStreams",
+                                "dynamodb:PutItem"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_latest/*",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_latest"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "kinesis:DescribeStream",
+                                "kinesis:ListStreams",
+                                "kinesis:PutRecord",
+                                "kinesis:PutRecords"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "*"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "role": "aws_iam_role.inventory_event-router_role.id",
+                "name": "inventory_event-router_role_policy"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_event-router_runaway_alarm",
+            "body": {
+                "evaluation_periods": "6.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "300.0",
+                "datapoints_to_alarm": "6.0",
+                "dimensions": {
+                    "FunctionName": "inventory_event-router"
+                },
+                "alarm_name": "inventory_event-router_runaway_alarm",
+                "statistic": "SampleCount",
+                "threshold": "200.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-router_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Invocations",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanOrEqualToThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_event-router_lambda-errors",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "3600.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "FunctionName": "inventory_event-router"
+                },
+                "alarm_name": "inventory_event-router_lambda-errors",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-router_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Errors",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "inventory_event-router",
+            "body": {
+                "function_name": "inventory_event-router",
+                "depends_on": [
+                    "aws_iam_role.inventory_event-router_role"
+                ],
+                "role": "aws_iam_role.inventory_event-router_role.arn",
+                "filename": "/tmp/nodejs_lambda_stub.zip",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-router",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "handler": "lib/index.handler",
+                "timeout": "60.0",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "memory_size": "128.0",
+                "runtime": "nodejs8.10",
+                "description": "Routes change events to a specific Kinesis stream defined for a tenant"
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "inventory_event-log_role",
+            "body": {
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "name": "inventory_event-log_role",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-log_role",
+                    "CreatedBy": "Platform.S create-infra.py"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "inventory_event-log_role_policy",
+            "body": {
+                "depends_on": [
+                    "aws_iam_role.inventory_event-log_role"
+                ],
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*inventory_event-log*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:GetObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-inventory-sandbox1/*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:ListBucket"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-inventory-sandbox1"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "dynamodb:PutItem",
+                                "dynamodb:Query"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_eventlog/*",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_eventlog",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_latest/*",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_latest"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "kinesis:GetRecords",
+                                "kinesis:GetShardIterator",
+                                "kinesis:DescribeStream",
+                                "kinesis:ListStreams"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "${aws_kinesis_stream.inventory_event-bus.arn}"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "role": "aws_iam_role.inventory_event-log_role.id",
+                "name": "inventory_event-log_role_policy"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_event-log_runaway_alarm",
+            "body": {
+                "evaluation_periods": "6.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "300.0",
+                "datapoints_to_alarm": "6.0",
+                "dimensions": {
+                    "FunctionName": "inventory_event-log"
+                },
+                "alarm_name": "inventory_event-log_runaway_alarm",
+                "statistic": "SampleCount",
+                "threshold": "400.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-log_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Invocations",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanOrEqualToThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_event-log_lambda-errors",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "3600.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "FunctionName": "inventory_event-log"
+                },
+                "alarm_name": "inventory_event-log_lambda-errors",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-log_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Errors",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "inventory_event-log",
+            "body": {
+                "function_name": "inventory_event-log",
+                "depends_on": [
+                    "aws_iam_role.inventory_event-log_role"
+                ],
+                "role": "aws_iam_role.inventory_event-log_role.arn",
+                "filename": "/tmp/nodejs_lambda_stub.zip",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-log",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "handler": "lib/index.handler",
+                "timeout": "300.0",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "memory_size": "512.0",
+                "runtime": "nodejs8.10",
+                "description": "Persist acp events"
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "inventory_event-history_role",
+            "body": {
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "name": "inventory_event-history_role",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-history_role",
+                    "CreatedBy": "Platform.S create-infra.py"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "inventory_event-history_role_policy",
+            "body": {
+                "depends_on": [
+                    "aws_iam_role.inventory_event-history_role"
+                ],
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*inventory_event-history*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "dynamodb:GetRecords",
+                                "dynamodb:GetShardIterator",
+                                "dynamodb:DescribeStream",
+                                "dynamodb:ListStreams",
+                                "dynamodb:PutItem",
+                                "dynamodb:DeleteItem"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_latest/*",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_latest",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_history/*",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_history"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "role": "aws_iam_role.inventory_event-history_role.id",
+                "name": "inventory_event-history_role_policy"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_event-history_runaway_alarm",
+            "body": {
+                "evaluation_periods": "6.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "300.0",
+                "datapoints_to_alarm": "6.0",
+                "dimensions": {
+                    "FunctionName": "inventory_event-history"
+                },
+                "alarm_name": "inventory_event-history_runaway_alarm",
+                "statistic": "SampleCount",
+                "threshold": "140.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-history_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Invocations",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanOrEqualToThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_event-history_lambda-errors",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "3600.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "FunctionName": "inventory_event-history"
+                },
+                "alarm_name": "inventory_event-history_lambda-errors",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-history_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Errors",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "inventory_event-history",
+            "body": {
+                "function_name": "inventory_event-history",
+                "depends_on": [
+                    "aws_iam_role.inventory_event-history_role"
+                ],
+                "role": "aws_iam_role.inventory_event-history_role.arn",
+                "filename": "/tmp/nodejs_lambda_stub.zip",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-history",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "handler": "lib/index.handler",
+                "timeout": "60.0",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "memory_size": "128.0",
+                "runtime": "nodejs8.10",
+                "description": "Records a history of changes for each resource"
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "inventory_event-indexer_role",
+            "body": {
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "name": "inventory_event-indexer_role",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-indexer_role",
+                    "CreatedBy": "Platform.S create-infra.py"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "inventory_event-indexer_role_policy",
+            "body": {
+                "depends_on": [
+                    "aws_iam_role.inventory_event-indexer_role"
+                ],
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*inventory_event-indexer*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:GetObject",
+                                "s3:PutObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-inventory-sandbox1/*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:ListBucket"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-inventory-sandbox1"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "sns:Publish"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:sns:us-east-1:309983114184:inventory_outbound-event-topic"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "es:ESHttpGet",
+                                "es:ESHttpDelete",
+                                "es:ESHttpHead",
+                                "es:ESHttpPost",
+                                "es:ESHttpPut"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:es:us-east-1:309983114184:domain/encrypted-inventory/*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "kinesis:GetRecords",
+                                "kinesis:GetShardIterator",
+                                "kinesis:DescribeStream",
+                                "kinesis:ListStreams"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "${aws_kinesis_stream.inventory_event-bus.arn}"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "role": "aws_iam_role.inventory_event-indexer_role.id",
+                "name": "inventory_event-indexer_role_policy"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_event-indexer_runaway_alarm",
+            "body": {
+                "evaluation_periods": "6.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "300.0",
+                "datapoints_to_alarm": "6.0",
+                "dimensions": {
+                    "FunctionName": "inventory_event-indexer"
+                },
+                "alarm_name": "inventory_event-indexer_runaway_alarm",
+                "statistic": "SampleCount",
+                "threshold": "1000.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-indexer_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Invocations",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanOrEqualToThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_event-indexer_lambda-errors",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "3600.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "FunctionName": "inventory_event-indexer"
+                },
+                "alarm_name": "inventory_event-indexer_lambda-errors",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-indexer_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Errors",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "inventory_event-indexer",
+            "body": {
+                "function_name": "inventory_event-indexer",
+                "depends_on": [
+                    "aws_iam_role.inventory_event-indexer_role"
+                ],
+                "role": "aws_iam_role.inventory_event-indexer_role.arn",
+                "memory_size": "3008.0",
+                "filename": "/tmp/nodejs_lambda_stub.zip",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-indexer",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "handler": "lib/index.handler",
+                "timeout": "300.0",
+                "runtime": "nodejs8.10",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "description": "Send resources to ES for indexing"
+            }
+        },
+        {
+            "type": "aws_lambda_event_source_mapping",
+            "name": "inventory_event-indexer_EvtMap_inventory_event-bus",
+            "body": {
+                "depends_on": [
+                    "aws_lambda_function.inventory_event-indexer"
+                ],
+                "starting_position": "TRIM_HORIZON",
+                "batch_size": "25.0",
+                "event_source_arn": "aws_kinesis_stream.inventory_event-bus.arn",
+                "function_name": "inventory_event-indexer"
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "inventory_pusher_role",
+            "body": {
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "name": "inventory_pusher_role",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_pusher_role",
+                    "CreatedBy": "Platform.S create-infra.py"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "inventory_pusher_role_policy",
+            "body": {
+                "depends_on": [
+                    "aws_iam_role.inventory_pusher_role"
+                ],
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*inventory_pusher*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:GetObject",
+                                "s3:PutObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-inventory-sandbox1/*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:GetObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-discovery-sandbox1/publisher/*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:GetObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-discovery-sandbox1/throttled-collector-publisher/*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:ListBucket"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-inventory-sandbox1"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:ListBucket"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-discovery-sandbox1"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "kinesis:GetRecords",
+                                "kinesis:GetShardIterator",
+                                "kinesis:DescribeStream",
+                                "kinesis:ListStreams"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:kinesis:us-east-1:309983114184:stream/discovery_event-bus"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "kinesis:PutRecord",
+                                "kinesis:PutRecords"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "${aws_kinesis_stream.inventory_event-bus.arn}"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "role": "aws_iam_role.inventory_pusher_role.id",
+                "name": "inventory_pusher_role_policy"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_pusher_runaway_alarm",
+            "body": {
+                "evaluation_periods": "6.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "300.0",
+                "datapoints_to_alarm": "6.0",
+                "dimensions": {
+                    "FunctionName": "inventory_pusher"
+                },
+                "alarm_name": "inventory_pusher_runaway_alarm",
+                "statistic": "SampleCount",
+                "threshold": "320.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_pusher_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Invocations",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanOrEqualToThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_pusher_lambda-errors",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "3600.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "FunctionName": "inventory_pusher"
+                },
+                "alarm_name": "inventory_pusher_lambda-errors",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_pusher_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Errors",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "inventory_pusher",
+            "body": {
+                "function_name": "inventory_pusher",
+                "depends_on": [
+                    "aws_iam_role.inventory_pusher_role"
+                ],
+                "role": "aws_iam_role.inventory_pusher_role.arn",
+                "memory_size": "1024.0",
+                "filename": "/tmp/nodejs_lambda_stub.zip",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_pusher",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "handler": "lib/index.handler",
+                "timeout": "240.0",
+                "runtime": "nodejs8.10",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "description": "Store and push discovery events into inventory"
+            }
+        },
+        {
+            "type": "aws_lambda_event_source_mapping",
+            "name": "inventory_pusher_EvtMap_discovery_event-bus",
+            "body": {
+                "depends_on": [
+                    "aws_lambda_function.inventory_pusher"
+                ],
+                "starting_position": "TRIM_HORIZON",
+                "batch_size": "30.0",
+                "event_source_arn": "arn:aws:kinesis:us-east-1:309983114184:stream/discovery_event-bus",
+                "function_name": "inventory_pusher"
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "inventory_event-replayer_role",
+            "body": {
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "name": "inventory_event-replayer_role",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-replayer_role",
+                    "CreatedBy": "Platform.S create-infra.py"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "inventory_event-replayer_role_policy",
+            "body": {
+                "depends_on": [
+                    "aws_iam_role.inventory_event-replayer_role"
+                ],
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*inventory_event-replayer*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:ListBucket"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-inventory-sandbox1"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "lambda:ListEventSourceMappings"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "lambda:UpdateEventSourceMapping"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:lambda:us-east-1:309983114184:event-source-mapping:*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "kinesis:PutRecord",
+                                "kinesis:PutRecords"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "${aws_kinesis_stream.inventory_event-bus.arn}"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "role": "aws_iam_role.inventory_event-replayer_role.id",
+                "name": "inventory_event-replayer_role_policy"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_event-replayer_runaway_alarm",
+            "body": {
+                "evaluation_periods": "6.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "300.0",
+                "datapoints_to_alarm": "6.0",
+                "dimensions": {
+                    "FunctionName": "inventory_event-replayer"
+                },
+                "alarm_name": "inventory_event-replayer_runaway_alarm",
+                "statistic": "SampleCount",
+                "threshold": "750.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-replayer_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Invocations",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanOrEqualToThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_event-replayer_lambda-errors",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "3600.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "FunctionName": "inventory_event-replayer"
+                },
+                "alarm_name": "inventory_event-replayer_lambda-errors",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-replayer_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Errors",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "inventory_event-replayer",
+            "body": {
+                "function_name": "inventory_event-replayer",
+                "depends_on": [
+                    "aws_iam_role.inventory_event-replayer_role"
+                ],
+                "role": "aws_iam_role.inventory_event-replayer_role.arn",
+                "filename": "/tmp/nodejs_lambda_stub.zip",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-replayer",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "handler": "lib/index.handler",
+                "memory_size": "3008.0",
+                "timeout": "900.0",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "runtime": "nodejs8.10",
+                "description": "Replays S3 resources as domain events to the inventory_event-bus."
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "inventory_api_role",
+            "body": {
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "name": "inventory_api_role",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_api_role",
+                    "CreatedBy": "Platform.S create-infra.py"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "inventory_api_role_policy",
+            "body": {
+                "depends_on": [
+                    "aws_iam_role.inventory_api_role"
+                ],
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*inventory_api*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "dynamodb:GetItem"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/authorisation_token/*",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/authorisation_token"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "dynamodb:Query"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/authentication_key/*",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/authentication_key"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "dynamodb:GetItem"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/authorisation_rbac/*",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/authorisation_rbac"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "dynamodb:Query",
+                                "dynamodb:PutItem",
+                                "dynamodb:GetItem",
+                                "dynamodb:DeleteItem",
+                                "dynamodb:DescribeTable"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_user-query/*",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_user-query"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "es:DescribeElasticsearchDomain",
+                                "es:ESHttpGet",
+                                "es:ESHttpDelete",
+                                "es:ESHttpHead",
+                                "es:ESHttpPost",
+                                "es:ESHttpPut"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:es:us-east-1:309983114184:domain/encrypted-inventory",
+                                "arn:aws:es:us-east-1:309983114184:domain/encrypted-inventory/*"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "role": "aws_iam_role.inventory_api_role.id",
+                "name": "inventory_api_role_policy"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_api_runaway_alarm",
+            "body": {
+                "evaluation_periods": "6.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "300.0",
+                "datapoints_to_alarm": "6.0",
+                "dimensions": {
+                    "FunctionName": "inventory_api"
+                },
+                "alarm_name": "inventory_api_runaway_alarm",
+                "statistic": "SampleCount",
+                "threshold": "5000.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_api_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Invocations",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanOrEqualToThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_api_lambda-errors",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "3600.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "FunctionName": "inventory_api"
+                },
+                "alarm_name": "inventory_api_lambda-errors",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_api_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Errors",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "inventory_api",
+            "body": {
+                "function_name": "inventory_api",
+                "depends_on": [
+                    "aws_iam_role.inventory_api_role"
+                ],
+                "role": "aws_iam_role.inventory_api_role.arn",
+                "filename": "/tmp/nodejs_lambda_stub.zip",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_api",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "handler": "lib/index.handler",
+                "timeout": "60.0",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "memory_size": "1024.0",
+                "runtime": "nodejs8.10",
+                "description": "Query inventory resources"
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "inventory_group-tenant-passthrough_role",
+            "body": {
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "name": "inventory_group-tenant-passthrough_role",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_group-tenant-passthrough_role",
+                    "CreatedBy": "Platform.S create-infra.py"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "inventory_group-tenant-passthrough_role_policy",
+            "body": {
+                "depends_on": [
+                    "aws_iam_role.inventory_group-tenant-passthrough_role"
+                ],
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*inventory_group-tenant-passthrough*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "kinesis:GetRecords",
+                                "kinesis:GetShardIterator",
+                                "kinesis:DescribeStream",
+                                "kinesis:ListStreams",
+                                "kinesis:PutRecord",
+                                "kinesis:PutRecords"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "*"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "role": "aws_iam_role.inventory_group-tenant-passthrough_role.id",
+                "name": "inventory_group-tenant-passthrough_role_policy"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_group-tenant-passthrough_runaway_alarm",
+            "body": {
+                "evaluation_periods": "6.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "300.0",
+                "datapoints_to_alarm": "6.0",
+                "dimensions": {
+                    "FunctionName": "inventory_group-tenant-passthrough"
+                },
+                "alarm_name": "inventory_group-tenant-passthrough_runaway_alarm",
+                "statistic": "SampleCount",
+                "threshold": "100.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_group-tenant-passthrough_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Invocations",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanOrEqualToThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_group-tenant-passthrough_lambda-errors",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "3600.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "FunctionName": "inventory_group-tenant-passthrough"
+                },
+                "alarm_name": "inventory_group-tenant-passthrough_lambda-errors",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_group-tenant-passthrough_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Errors",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "inventory_group-tenant-passthrough",
+            "body": {
+                "function_name": "inventory_group-tenant-passthrough",
+                "depends_on": [
+                    "aws_iam_role.inventory_group-tenant-passthrough_role"
+                ],
+                "role": "aws_iam_role.inventory_group-tenant-passthrough_role.arn",
+                "filename": "/tmp/python_lambda_stub.zip",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_group-tenant-passthrough",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "handler": "index.handler",
+                "timeout": "10.0",
+                "memory_size": "128.0",
+                "runtime": "python2.7",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "description": "Temporary lambda that reads from resource_group-config stream and writes to tenant kinesis stream"
+            }
+        },
+        {
+            "type": "aws_lambda_event_source_mapping",
+            "name": "inventory_group-tenant-passthrough_EvtMap_inventory_group-config",
+            "body": {
+                "depends_on": [
+                    "aws_lambda_function.inventory_group-tenant-passthrough"
+                ],
+                "starting_position": "TRIM_HORIZON",
+                "batch_size": "500.0",
+                "event_source_arn": "aws_kinesis_stream.inventory_group-config.arn",
+                "function_name": "inventory_group-tenant-passthrough"
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "inventory_copy-resource-data_role",
+            "body": {
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "name": "inventory_copy-resource-data_role",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_copy-resource-data_role",
+                    "CreatedBy": "Platform.S create-infra.py"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "inventory_copy-resource-data_role_policy",
+            "body": {
+                "depends_on": [
+                    "aws_iam_role.inventory_copy-resource-data_role"
+                ],
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*inventory_copy-resource-data*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "logs:CreateLogGroup",
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:us-east-1:309983114184:*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "dynamodb:GetItem",
+                                "dynamodb:Scan",
+                                "dynamodb:PutItem"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_snapshot/*",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_snapshot",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_eventlog/*",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_eventlog"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "role": "aws_iam_role.inventory_copy-resource-data_role.id",
+                "name": "inventory_copy-resource-data_role_policy"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_copy-resource-data_runaway_alarm",
+            "body": {
+                "evaluation_periods": "6.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "300.0",
+                "datapoints_to_alarm": "6.0",
+                "dimensions": {
+                    "FunctionName": "inventory_copy-resource-data"
+                },
+                "alarm_name": "inventory_copy-resource-data_runaway_alarm",
+                "statistic": "SampleCount",
+                "threshold": "100.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_copy-resource-data_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Invocations",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanOrEqualToThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_copy-resource-data_lambda-errors",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "3600.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "FunctionName": "inventory_copy-resource-data"
+                },
+                "alarm_name": "inventory_copy-resource-data_lambda-errors",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_copy-resource-data_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Errors",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "inventory_copy-resource-data",
+            "body": {
+                "function_name": "inventory_copy-resource-data",
+                "depends_on": [
+                    "aws_iam_role.inventory_copy-resource-data_role"
+                ],
+                "role": "aws_iam_role.inventory_copy-resource-data_role.arn",
+                "filename": "/tmp/python_lambda_stub.zip",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_copy-resource-data",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "handler": "index.handler",
+                "memory_size": "128.0",
+                "timeout": "60.0",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "runtime": "python2.7",
+                "description": "Copy Resource Data"
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "inventory_resend-events_role",
+            "body": {
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "name": "inventory_resend-events_role",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_resend-events_role",
+                    "CreatedBy": "Platform.S create-infra.py"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "inventory_resend-events_role_policy",
+            "body": {
+                "depends_on": [
+                    "aws_iam_role.inventory_resend-events_role"
+                ],
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*inventory_resend-events*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "dynamodb:GetRecords",
+                                "dynamodb:GetItem",
+                                "dynamodb:Query",
+                                "dynamodb:Scan"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_eventlog/*",
+                                "arn:aws:dynamodb:us-east-1:309983114184:table/inventory_eventlog"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "kinesis:DescribeStream",
+                                "kinesis:ListStreams",
+                                "kinesis:PutRecord",
+                                "kinesis:PutRecords"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "*"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "role": "aws_iam_role.inventory_resend-events_role.id",
+                "name": "inventory_resend-events_role_policy"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_resend-events_runaway_alarm",
+            "body": {
+                "evaluation_periods": "6.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "300.0",
+                "datapoints_to_alarm": "6.0",
+                "dimensions": {
+                    "FunctionName": "inventory_resend-events"
+                },
+                "alarm_name": "inventory_resend-events_runaway_alarm",
+                "statistic": "SampleCount",
+                "threshold": "100.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_resend-events_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Invocations",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanOrEqualToThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_resend-events_lambda-errors",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "3600.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "FunctionName": "inventory_resend-events"
+                },
+                "alarm_name": "inventory_resend-events_lambda-errors",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_resend-events_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Errors",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "inventory_resend-events",
+            "body": {
+                "function_name": "inventory_resend-events",
+                "depends_on": [
+                    "aws_iam_role.inventory_resend-events_role"
+                ],
+                "role": "aws_iam_role.inventory_resend-events_role.arn",
+                "filename": "/tmp/python_lambda_stub.zip",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_resend-events",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "handler": "index.handler",
+                "memory_size": "128.0",
+                "timeout": "120.0",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "runtime": "python2.7",
+                "description": "Resend events from resource_eventlog for specific tenant and since timestamp to tenant kinesis stream"
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "inventory_resource-retention_role",
+            "body": {
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "name": "inventory_resource-retention_role",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_resource-retention_role",
+                    "CreatedBy": "Platform.S create-infra.py"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "inventory_resource-retention_role_policy",
+            "body": {
+                "depends_on": [
+                    "aws_iam_role.inventory_resource-retention_role"
+                ],
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*inventory_resource-retention*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "es:DescribeElasticsearchDomain",
+                                "es:ESHttpGet",
+                                "es:ESHttpDelete",
+                                "es:ESHttpHead",
+                                "es:ESHttpPost",
+                                "es:ESHttpPut"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:es:us-east-1:309983114184:domain/encrypted-inventory/*"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "role": "aws_iam_role.inventory_resource-retention_role.id",
+                "name": "inventory_resource-retention_role_policy"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_resource-retention_runaway_alarm",
+            "body": {
+                "evaluation_periods": "6.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "300.0",
+                "datapoints_to_alarm": "6.0",
+                "dimensions": {
+                    "FunctionName": "inventory_resource-retention"
+                },
+                "alarm_name": "inventory_resource-retention_runaway_alarm",
+                "statistic": "SampleCount",
+                "threshold": "100.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_resource-retention_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Invocations",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanOrEqualToThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_resource-retention_lambda-errors",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "3600.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "FunctionName": "inventory_resource-retention"
+                },
+                "alarm_name": "inventory_resource-retention_lambda-errors",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_resource-retention_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Errors",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "inventory_resource-retention",
+            "body": {
+                "function_name": "inventory_resource-retention",
+                "depends_on": [
+                    "aws_iam_role.inventory_resource-retention_role"
+                ],
+                "role": "aws_iam_role.inventory_resource-retention_role.arn",
+                "filename": "/tmp/nodejs_lambda_stub.zip",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_resource-retention",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "handler": "lib/index.handler",
+                "memory_size": "512.0",
+                "timeout": "300.0",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "runtime": "nodejs8.10",
+                "description": "Lambda to delete old resource indexes"
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "inventory_move-s3-prefixes_role",
+            "body": {
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "name": "inventory_move-s3-prefixes_role",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_move-s3-prefixes_role",
+                    "CreatedBy": "Platform.S create-infra.py"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "inventory_move-s3-prefixes_role_policy",
+            "body": {
+                "depends_on": [
+                    "aws_iam_role.inventory_move-s3-prefixes_role"
+                ],
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*inventory_move-s3-prefixes*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "sqs:GetQueueAttributes",
+                                "sqs:DeleteMessage",
+                                "sqs:ChangeMessageVisibility",
+                                "sqs:DeleteMessageBatch",
+                                "sqs:ChangeMessageVisibilityBatch",
+                                "sqs:ReceiveMessage"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "${aws_sqs_queue.inventory_move-s3-prefixes-queue.arn}",
+                                "${aws_sqs_queue.inventory_move-s3-prefixes-deadletter-queue.arn}"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:ListBucket"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-inventory-sandbox1"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:GetObject",
+                                "s3:PutObject",
+                                "s3:DeleteObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-inventory-sandbox1/inventory/5/*"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "role": "aws_iam_role.inventory_move-s3-prefixes_role.id",
+                "name": "inventory_move-s3-prefixes_role_policy"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_move-s3-prefixes_runaway_alarm",
+            "body": {
+                "evaluation_periods": "6.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "300.0",
+                "datapoints_to_alarm": "6.0",
+                "dimensions": {
+                    "FunctionName": "inventory_move-s3-prefixes"
+                },
+                "alarm_name": "inventory_move-s3-prefixes_runaway_alarm",
+                "statistic": "SampleCount",
+                "threshold": "100.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_move-s3-prefixes_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Invocations",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanOrEqualToThreshold"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_move-s3-prefixes_lambda-errors",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "period": "3600.0",
+                "datapoints_to_alarm": "1.0",
+                "dimensions": {
+                    "FunctionName": "inventory_move-s3-prefixes"
+                },
+                "alarm_name": "inventory_move-s3-prefixes_lambda-errors",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_move-s3-prefixes_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "metric_name": "Errors",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "namespace": "AWS/Lambda",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold"
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "inventory_move-s3-prefixes",
+            "body": {
+                "function_name": "inventory_move-s3-prefixes",
+                "depends_on": [
+                    "aws_iam_role.inventory_move-s3-prefixes_role"
+                ],
+                "role": "aws_iam_role.inventory_move-s3-prefixes_role.arn",
+                "filename": "/tmp/python_lambda_stub.zip",
+                "reserved_concurrent_executions": "10.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_move-s3-prefixes",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "handler": "index.handler",
+                "memory_size": "2048.0",
+                "timeout": "900.0",
+                "runtime": "python2.7",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "description": "Lambda to move objects below one or more prefixes"
+            }
+        },
+        {
+            "type": "aws_lambda_event_source_mapping",
+            "name": "inventory_move-s3-prefixes_EvtMap_inventory_move-s3-prefixes",
+            "body": {
+                "depends_on": [
+                    "aws_lambda_function.inventory_move-s3-prefixes"
+                ],
+                "batch_size": "10.0",
+                "event_source_arn": "aws_sqs_queue.inventory_move-s3-prefixes-queue.arn",
+                "function_name": "inventory_move-s3-prefixes"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_encrypted-cpu-node-alarm",
+            "body": {
+                "evaluation_periods": "3.0",
+                "alarm_description": "This metric monitors `inventory` ElasticSeach cluster worker nodes and alarms when maximum CPU load is over 90% within a minute",
+                "namespace": "AWS/ES",
+                "period": "60.0",
+                "datapoints_to_alarm": "3.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_encrypted-cpu-node-alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "dimensions": {
+                    "DomainName": "encrypted-inventory",
+                    "ClientId": "309983114184.0"
+                },
+                "alarm_actions": [
+                    "aws_sns_topic.inventory_alarm-topic-sandbox1.arn"
+                ],
+                "statistic": "Maximum",
+                "threshold": "90.0",
+                "comparison_operator": "GreaterThanThreshold",
+                "alarm_name": "inventory_encrypted-cpu-node-alarm",
+                "metric_name": "CPUUtilization"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_encrypted-cpu-master-alarm",
+            "body": {
+                "evaluation_periods": "3.0",
+                "alarm_description": "This metric monitors `inventory` ElasticSeach cluster master node and alarms when maximum CPU load is over 90% within a minute",
+                "namespace": "AWS/ES",
+                "period": "60.0",
+                "datapoints_to_alarm": "3.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_encrypted-cpu-master-alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "dimensions": {
+                    "DomainName": "encrypted-inventory",
+                    "ClientId": "309983114184.0"
+                },
+                "alarm_actions": [
+                    "aws_sns_topic.inventory_alarm-topic-sandbox1.arn"
+                ],
+                "statistic": "Maximum",
+                "threshold": "90.0",
+                "comparison_operator": "GreaterThanThreshold",
+                "alarm_name": "inventory_encrypted-cpu-master-alarm",
+                "metric_name": "MasterCPUUtilization"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_encrypted-jvmmemory-node-alarm",
+            "body": {
+                "evaluation_periods": "3.0",
+                "alarm_description": "This metric monitors `inventory` ElasticSeach cluster worker nodes and alarms when maximum JVM memory is loaded over 75% within a minute",
+                "namespace": "AWS/ES",
+                "period": "60.0",
+                "datapoints_to_alarm": "3.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_encrypted-jvmmemory-node-alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "dimensions": {
+                    "DomainName": "encrypted-inventory",
+                    "ClientId": "309983114184.0"
+                },
+                "alarm_actions": [
+                    "aws_sns_topic.inventory_alarm-topic-sandbox1.arn"
+                ],
+                "statistic": "Maximum",
+                "threshold": "75.0",
+                "comparison_operator": "GreaterThanThreshold",
+                "alarm_name": "inventory_encrypted-jvmmemory-node-alarm",
+                "metric_name": "JVMMemoryPressure"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_encrypted-jvmmemory-master-alarm",
+            "body": {
+                "evaluation_periods": "3.0",
+                "alarm_description": "This metric monitors `inventory` ElasticSeach cluster master nodes and alarms when maximum JVM memory is loaded over 75% within a minute",
+                "namespace": "AWS/ES",
+                "period": "60.0",
+                "datapoints_to_alarm": "3.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_encrypted-jvmmemory-master-alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "dimensions": {
+                    "DomainName": "encrypted-inventory",
+                    "ClientId": "309983114184.0"
+                },
+                "alarm_actions": [
+                    "aws_sns_topic.inventory_alarm-topic-sandbox1.arn"
+                ],
+                "statistic": "Maximum",
+                "threshold": "75.0",
+                "comparison_operator": "GreaterThanThreshold",
+                "alarm_name": "inventory_encrypted-jvmmemory-master-alarm",
+                "metric_name": "MasterJVMMemoryPressure"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_encrypted-freespace-node-alarm",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors `inventory` ElasticSeach cluster worker nodes and alarms when disk free memory is less than 2GB within a minute",
+                "namespace": "AWS/ES",
+                "period": "60.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_encrypted-freespace-node-alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "dimensions": {
+                    "DomainName": "encrypted-inventory",
+                    "ClientId": "309983114184.0"
+                },
+                "alarm_actions": [
+                    "aws_sns_topic.inventory_alarm-topic-sandbox1.arn"
+                ],
+                "statistic": "Minimum",
+                "threshold": "102400.0",
+                "comparison_operator": "LessThanThreshold",
+                "alarm_name": "inventory_encrypted-freespace-node-alarm",
+                "metric_name": "FreeStorageSpace"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_encrypted-key-error-alarm",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors `inventory` ElasticSeach cluster and alarms when key used to encrypt data at REST has been disabled",
+                "namespace": "AWS/ES",
+                "period": "60.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_encrypted-key-error-alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "dimensions": {
+                    "DomainName": "encrypted-inventory",
+                    "ClientId": "309983114184.0"
+                },
+                "alarm_actions": [
+                    "aws_sns_topic.inventory_alarm-topic-sandbox1.arn"
+                ],
+                "statistic": "Maximum",
+                "threshold": "1.0",
+                "comparison_operator": "GreaterThanOrEqualToThreshold",
+                "alarm_name": "inventory_encrypted-key-error-alarm",
+                "metric_name": "KMSKeyError"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_encrypted-key-inaccessible-alarm",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "This metric monitors `inventory` ElasticSeach cluster and alarms when key used to encrypt data at REST has been deleted or revoked its grants to Amazon ES",
+                "namespace": "AWS/ES",
+                "period": "60.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_encrypted-key-inaccessible-alarm",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "dimensions": {
+                    "DomainName": "encrypted-inventory",
+                    "ClientId": "309983114184.0"
+                },
+                "alarm_actions": [
+                    "aws_sns_topic.inventory_alarm-topic-sandbox1.arn"
+                ],
+                "statistic": "Maximum",
+                "threshold": "1.0",
+                "comparison_operator": "GreaterThanOrEqualToThreshold",
+                "alarm_name": "inventory_encrypted-key-inaccessible-alarm",
+                "metric_name": "KMSKeyInaccessible"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_event-indexer-dropped-records-error",
+            "body": {
+                "evaluation_periods": "1.0",
+                "alarm_description": "inventory_event-indexer dropped records from inventory",
+                "namespace": "event_indexer_log_metrics",
+                "period": "300.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-indexer-dropped-records-error",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "alarm_name": "inventory_event-indexer-dropped-records-error",
+                "statistic": "Sum",
+                "threshold": "1.0",
+                "comparison_operator": "GreaterThanThreshold",
+                "metric_name": "event_indexer_dropped_records"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_log_group",
+            "name": "inventory_encrypted-elasticsearch-logs",
+            "body": {
+                "name": "inventory_encrypted-elasticsearch-logs"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_log_resource_policy",
+            "name": "inventory_encrypted-elasticsearch_log-policy",
+            "body": {
+                "policy_document": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:PutLogEvents",
+                                "logs:PutLogEventsBatch",
+                                "logs:CreateLogStream"
+                            ],
+                            "Resource": "arn:aws:logs:*:*:log-group:inventory_encrypted-elasticsearch*",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "es.amazonaws.com"
+                            }
+                        }
+                    ]
+                },
+                "policy_name": "inventory_encrypted-elasticsearch_log-policy"
+            }
+        },
+        {
+            "type": "aws_elasticsearch_domain",
+            "name": "inventory_encrypted-elasticsearch",
+            "body": {
+                "access_policies": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Action": "es:DescribeElasticsearchDomain,es:ESHttp*",
+                            "Resource": "arn:aws:es:us-east-1:309983114184:domain/encrypted-inventory/*",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": "arn:aws:iam::309983114184:role/Admin"
+                            }
+                        },
+                        {
+                            "Action": "es:DescribeElasticsearchDomain,es:ESHttp*",
+                            "Resource": "arn:aws:es:us-east-1:309983114184:domain/encrypted-inventory/*",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": "arn:aws:iam::309983114184:role/cloud-estate_api_role"
+                            }
+                        },
+                        {
+                            "Action": "es:DescribeElasticsearchDomain,es:ESHttp*",
+                            "Resource": "arn:aws:es:us-east-1:309983114184:domain/encrypted-inventory/*",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": "arn:aws:iam::309983114184:role/inventory_api_role"
+                            }
+                        },
+                        {
+                            "Action": "es:DescribeElasticsearchDomain,es:ESHttp*",
+                            "Resource": "arn:aws:es:us-east-1:309983114184:domain/encrypted-inventory/*",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": "arn:aws:iam::309983114184:role/inventory_event-indexer_role"
+                            }
+                        },
+                        {
+                            "Action": "es:DescribeElasticsearchDomain,es:ESHttp*",
+                            "Resource": "arn:aws:es:us-east-1:309983114184:domain/encrypted-inventory/*",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": "arn:aws:iam::309983114184:role/inventory_resource-retention_role"
+                            }
+                        },
+                        {
+                            "Action": "es:DescribeElasticsearchDomain,es:ESHttp*",
+                            "Resource": "arn:aws:es:us-east-1:309983114184:domain/encrypted-inventory/*",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": "arn:aws:iam::309983114184:role/notes_api_role"
+                            }
+                        },
+                        {
+                            "Action": "es:DescribeElasticsearchDomain,es:ESHttp*",
+                            "Resource": "arn:aws:es:us-east-1:309983114184:domain/encrypted-inventory/*",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": "arn:aws:iam::309983114184:role/notes_stream_role"
+                            }
+                        },
+                        {
+                            "Action": "es:DescribeElasticsearchDomain,es:ESHttp*",
+                            "Resource": "arn:aws:es:us-east-1:309983114184:domain/encrypted-inventory/*",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": "arn:aws:iam::309983114184:role/proxy_api_role"
+                            }
+                        },
+                        {
+                            "Action": "es:DescribeElasticsearchDomain,es:ESHttp*",
+                            "Resource": "arn:aws:es:us-east-1:309983114184:domain/encrypted-inventory/*",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "AWS": "arn:aws:iam::309983114184:role/resource-metadata_sync-api_role"
+                            }
+                        }
+                    ]
+                },
+                "snapshot_options": {
+                    "automated_snapshot_start_hour": "23.0"
+                },
+                "depends_on": [
+                    "aws_cloudwatch_log_resource_policy.inventory_encrypted-elasticsearch_log-policy"
+                ],
+                "cluster_config": {
+                    "dedicated_master_count": "0",
+                    "dedicated_master_enabled": "false",
+                    "dedicated_master_type": "m4.large.elasticsearch",
+                    "instance_count": "1",
+                    "instance_type": "m4.large.elasticsearch",
+                    "zone_awareness_enabled": "false"
+                },
+                "domain_name": "encrypted-inventory",
+                "encrypt_at_rest": {
+                    "enabled": "true",
+                    "kms_key_id": "aws_kms_key.inventory_master-key.key_id"
+                },
+                "ebs_options": {
+                    "ebs_enabled": "true",
+                    "volume_size": "200.0",
+                    "volume_type": "gp2"
+                },
+                "elasticsearch_version": "5.1",
+                "log_publishing_options": {
+                    "cloudwatch_log_group_arn": "aws_cloudwatch_log_group.inventory_encrypted-elasticsearch-logs.arn",
+                    "log_type": "ES_APPLICATION_LOGS"
+                },
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "encrypted-inventory",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Description": "Platform.S Encrypted Elasticsearch Inventory Domain"
+                },
+                "lifecycle": {
+                    "prevent_destroy": "true"
+                }
+            }
+        },
+        {
+            "type": "aws_kinesis_stream",
+            "name": "inventory_bus",
+            "body": {
+                "name": "inventory_bus",
+                "encryption_type": "KMS",
+                "kms_key_id": "alias/aws/kinesis",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_bus",
+                    "CreatedBy": "platform.s deployer",
+                    "Description": "Inventory bus stream"
+                },
+                "retention_period": "24.0",
+                "shard_count": "1.0"
+            }
+        },
+        {
+            "type": "aws_kinesis_stream",
+            "name": "inventory_event-bus",
+            "body": {
+                "name": "inventory_event-bus",
+                "encryption_type": "KMS",
+                "kms_key_id": "alias/aws/kinesis",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-bus",
+                    "CreatedBy": "platform.s deployer",
+                    "Description": "Inventory event bus stream"
+                },
+                "retention_period": "168.0",
+                "shard_count": "1.0"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_event-bus_kinesis-readexceeded",
+            "body": {
+                "evaluation_periods": "1.0",
+                "depends_on": [
+                    "aws_kinesis_stream.inventory_event-bus"
+                ],
+                "alarm_description": "This will fire if the Read throughput has exceeded on the Kinesis Stream",
+                "period": "300.0",
+                "datapoints_to_alarm": "1.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-bus_kinesis-readexceeded",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "dimensions": {
+                    "StreamName": "inventory_event-bus"
+                },
+                "statistic": "Average",
+                "threshold": "1.0",
+                "metric_name": "ReadProvisionedThroughputExceeded",
+                "namespace": "AWS/Kinesis",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold",
+                "alarm_name": "inventory_event-bus_kinesis-readexceeded"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_event-bus_kinesis-writeexceeded",
+            "body": {
+                "evaluation_periods": "1.0",
+                "depends_on": [
+                    "aws_kinesis_stream.inventory_event-bus"
+                ],
+                "alarm_description": "This will fire if the Write throughput has exceeded on the Kinesis Stream",
+                "period": "300.0",
+                "datapoints_to_alarm": "1.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-bus_kinesis-writeexceeded",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "dimensions": {
+                    "StreamName": "inventory_event-bus"
+                },
+                "statistic": "Average",
+                "threshold": "1.0",
+                "metric_name": "WriteProvisionedThroughputExceeded",
+                "namespace": "AWS/Kinesis",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold",
+                "alarm_name": "inventory_event-bus_kinesis-writeexceeded"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "inventory_event-bus_kinesis-iteratoragemilliseconds",
+            "body": {
+                "evaluation_periods": "2.0",
+                "depends_on": [
+                    "aws_kinesis_stream.inventory_event-bus"
+                ],
+                "alarm_description": "This will fire if the record throughput age is more than 30 minutes old",
+                "period": "300.0",
+                "datapoints_to_alarm": "2.0",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_event-bus_kinesis-iteratoragemilliseconds",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "dimensions": {
+                    "StreamName": "inventory_event-bus"
+                },
+                "statistic": "Maximum",
+                "threshold": "1800000.0",
+                "metric_name": "GetRecords.IteratorAgeMilliseconds",
+                "namespace": "AWS/Kinesis",
+                "treat_missing_data": "notBreaching",
+                "comparison_operator": "GreaterThanThreshold",
+                "alarm_name": "inventory_event-bus_kinesis-iteratoragemilliseconds"
+            }
+        },
+        {
+            "type": "aws_kinesis_stream",
+            "name": "inventory_group-config",
+            "body": {
+                "name": "inventory_group-config",
+                "encryption_type": "KMS",
+                "kms_key_id": "alias/aws/kinesis",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_group-config",
+                    "CreatedBy": "platform.s deployer",
+                    "Description": "Inventory Group Config stream"
+                },
+                "retention_period": "24.0",
+                "shard_count": "1.0"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_event_target",
+            "name": "inventory_resource-retention-rule_target",
+            "body": {
+                "depends_on": [
+                    "aws_cloudwatch_event_rule.inventory_resource-retention-rule",
+                    "aws_lambda_function.inventory_resource-retention"
+                ],
+                "target_id": "inventory_resource-retention-rule_target",
+                "arn": "aws_lambda_function.inventory_resource-retention.arn",
+                "rule": "inventory_resource-retention-rule"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_event_rule",
+            "name": "inventory_resource-retention-rule",
+            "body": {
+                "description": "Schedule invocation of the lambda to manage resource retention",
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_resource-retention-rule",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "schedule_expression": "cron(0 15 * * ? *)",
+                "name": "inventory_resource-retention-rule"
+            }
+        },
+        {
+            "type": "aws_lambda_permission",
+            "name": "inventory_resource-retention-rule_invoke",
+            "body": {
+                "statement_id": "inventory_resource-retention-rule_invoke",
+                "action": "lambda:InvokeFunction",
+                "source_arn": "aws_cloudwatch_event_rule.inventory_resource-retention-rule.arn",
+                "function_name": "aws_lambda_function.inventory_resource-retention.arn",
+                "principal": "events.amazonaws.com"
+            }
+        },
+        {
+            "type": "aws_cloudwatch_log_metric_filter",
+            "name": "inventory_event-indexer-dropped-records-filter",
+            "body": {
+                "pattern": "CAUTION Events have been dropped whilst indexing in Inventory",
+                "name": "inventory_event-indexer-dropped-records-filter",
+                "log_group_name": "/aws/lambda/inventory_event-indexer",
+                "metric_transformation": {
+                    "name": "event_indexer_dropped_records",
+                    "namespace": "event_indexer_log_metrics",
+                    "value": "1"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "inventory_gateway-invoke-lambda",
+            "body": {
+                "tags": {
+                    "Environment": "sandbox1",
+                    "Component": "inventory",
+                    "Name": "inventory_gateway-invoke-lambda",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "apigateway.amazonaws.com"
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "name": "inventory_gateway-invoke-lambda"
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "inventory_gateway-invoke-lambda_role_policy",
+            "body": {
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "lambda:InvokeFunction"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:lambda:us-east-1:309983114184:function:inventory_api"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:*"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "role": "aws_iam_role.inventory_gateway-invoke-lambda.id",
+                "name": "inventory_gateway-invoke-lambda_role_policy"
+            }
+        },
+        {
+            "type": "aws_api_gateway_rest_api",
+            "name": "inventory",
+            "body": {
+                "name": "inventory",
+                "binary_media_types": [
+                    "*/*"
+                ]
+            }
+        },
+        {
+            "type": "aws_api_gateway_resource",
+            "name": "inventory_deployment_resource_proxy",
+            "body": {
+                "parent_id": "aws_api_gateway_rest_api.inventory.root_resource_id",
+                "rest_api_id": "aws_api_gateway_rest_api.inventory.id",
+                "path_part": "{proxy+}"
+            }
+        },
+        {
+            "type": "aws_api_gateway_method",
+            "name": "inventory_integration_inventory_deployment_resource_ANY",
+            "body": {
+                "http_method": "ANY",
+                "authorization": "NONE",
+                "rest_api_id": "aws_api_gateway_rest_api.inventory.id",
+                "resource_id": "aws_api_gateway_resource.inventory_deployment_resource_proxy.id"
+            }
+        },
+        {
+            "type": "aws_api_gateway_integration",
+            "name": "inventory_integration_inventory_deployment_resource_ANY_int",
+            "body": {
+                "resource_id": "aws_api_gateway_resource.inventory_deployment_resource_proxy.id",
+                "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/${aws_lambda_function.inventory_api.arn}/invocations",
+                "http_method": "aws_api_gateway_method.inventory_integration_inventory_deployment_resource_ANY.http_method",
+                "integration_http_method": "POST",
+                "rest_api_id": "aws_api_gateway_rest_api.inventory.id",
+                "credentials": "aws_iam_role.inventory_gateway-invoke-lambda.arn",
+                "type": "AWS_PROXY",
+                "request_templates": {
+                    "application/json": {
+                        "statusCode": "200.0"
+                    }
+                }
+            }
+        },
+        {
+            "type": "aws_api_gateway_base_path_mapping",
+            "name": "inventory_deployment-base-path-mapping",
+            "body": {
+                "stage_name": "sandbox1",
+                "depends_on": [
+                    "aws_api_gateway_deployment.inventory_deployment"
+                ],
+                "domain_name": "api.sandbox1.cloudplatform.accenture.com",
+                "api_id": "aws_api_gateway_rest_api.inventory.id",
+                "base_path": "inventory"
+            }
+        },
+        {
+            "type": "aws_api_gateway_deployment",
+            "name": "inventory_deployment",
+            "body": {
+                "stage_name": "sandbox1",
+                "depends_on": [
+                    "aws_api_gateway_integration.inventory_integration_inventory_deployment_resource_ANY_int"
+                ],
+                "rest_api_id": "aws_api_gateway_rest_api.inventory.id"
+            }
+        }
+    ],
+    "relationships": [
+        {
+            "in": "aws_iam_role.inventory_event-router_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-router_role",
+            "out": "aws_dynamodb_table.inventory_latest",
+            "label": "['dynamodb:GetRecords','dynamodb:GetShardIterator','dynamodb:DescribeStream','dynamodb:ListStreams','dynamodb:PutItem']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-router_role",
+            "out": "*",
+            "label": "['kinesis:DescribeStream','kinesis:ListStreams','kinesis:PutRecord','kinesis:PutRecords']"
+        },
+        {
+            "in": "aws_lambda_function.inventory_event-router",
+            "out": "aws_iam_role.inventory_event-router_role",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.inventory_event-log_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-log_role",
+            "out": "aws_s3_bucket.acp-platform-s-inventory-sandbox1",
+            "label": "['s3:GetObject']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-log_role",
+            "out": "aws_s3_bucket.acp-platform-s-inventory-sandbox1",
+            "label": "['s3:ListBucket']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-log_role",
+            "out": "aws_dynamodb_table.inventory_eventlog",
+            "label": "['dynamodb:PutItem','dynamodb:Query']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-log_role",
+            "out": "aws_dynamodb_table.inventory_latest",
+            "label": "['dynamodb:PutItem','dynamodb:Query']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-log_role",
+            "out": "aws_kinesis_stream.inventory_event-bus",
+            "label": "['kinesis:GetRecords','kinesis:GetShardIterator','kinesis:DescribeStream','kinesis:ListStreams']"
+        },
+        {
+            "in": "aws_lambda_function.inventory_event-log",
+            "out": "aws_iam_role.inventory_event-log_role",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.inventory_event-history_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-history_role",
+            "out": "aws_dynamodb_table.inventory_latest",
+            "label": "['dynamodb:GetRecords','dynamodb:GetShardIterator','dynamodb:DescribeStream','dynamodb:ListStreams','dynamodb:PutItem','dynamodb:DeleteItem']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-history_role",
+            "out": "aws_dynamodb_table.inventory_history",
+            "label": "['dynamodb:GetRecords','dynamodb:GetShardIterator','dynamodb:DescribeStream','dynamodb:ListStreams','dynamodb:PutItem','dynamodb:DeleteItem']"
+        },
+        {
+            "in": "aws_lambda_function.inventory_event-history",
+            "out": "aws_iam_role.inventory_event-history_role",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.inventory_event-indexer_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-indexer_role",
+            "out": "aws_s3_bucket.acp-platform-s-inventory-sandbox1",
+            "label": "['s3:GetObject','s3:PutObject']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-indexer_role",
+            "out": "aws_s3_bucket.acp-platform-s-inventory-sandbox1",
+            "label": "['s3:ListBucket']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-indexer_role",
+            "out": "aws_sns_topic.inventory_outbound-event-topic",
+            "label": "['sns:Publish']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-indexer_role",
+            "out": "",
+            "label": "['es:ESHttpGet','es:ESHttpDelete','es:ESHttpHead','es:ESHttpPost','es:ESHttpPut']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-indexer_role",
+            "out": "aws_kinesis_stream.inventory_event-bus",
+            "label": "['kinesis:GetRecords','kinesis:GetShardIterator','kinesis:DescribeStream','kinesis:ListStreams']"
+        },
+        {
+            "in": "aws_lambda_function.inventory_event-indexer",
+            "out": "aws_iam_role.inventory_event-indexer_role",
+            "label": ""
+        },
+        {
+            "in": "aws_kinesis_stream.inventory_event-bus",
+            "out": "aws_lambda_function.inventory_event-indexer",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.inventory_pusher_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.inventory_pusher_role",
+            "out": "aws_s3_bucket.acp-platform-s-inventory-sandbox1",
+            "label": "['s3:GetObject','s3:PutObject']"
+        },
+        {
+            "in": "aws_iam_role.inventory_pusher_role",
+            "out": "aws_s3_bucket.acp-platform-s-discovery-sandbox1/publisher",
+            "label": "['s3:GetObject']"
+        },
+        {
+            "in": "aws_iam_role.inventory_pusher_role",
+            "out": "aws_s3_bucket.acp-platform-s-discovery-sandbox1/throttled-collector-publisher",
+            "label": "['s3:GetObject']"
+        },
+        {
+            "in": "aws_iam_role.inventory_pusher_role",
+            "out": "aws_s3_bucket.acp-platform-s-inventory-sandbox1",
+            "label": "['s3:ListBucket']"
+        },
+        {
+            "in": "aws_iam_role.inventory_pusher_role",
+            "out": "aws_s3_bucket.acp-platform-s-discovery-sandbox1",
+            "label": "['s3:ListBucket']"
+        },
+        {
+            "in": "aws_iam_role.inventory_pusher_role",
+            "out": "aws_kinesis_stream.stream",
+            "label": "['kinesis:GetRecords','kinesis:GetShardIterator','kinesis:DescribeStream','kinesis:ListStreams']"
+        },
+        {
+            "in": "aws_iam_role.inventory_pusher_role",
+            "out": "aws_kinesis_stream.inventory_event-bus",
+            "label": "['kinesis:PutRecord','kinesis:PutRecords']"
+        },
+        {
+            "in": "aws_lambda_function.inventory_pusher",
+            "out": "aws_iam_role.inventory_pusher_role",
+            "label": ""
+        },
+        {
+            "in": "arn:aws:kinesis:us-east-1:309983114184:stream/discovery_event-bus",
+            "out": "aws_lambda_function.inventory_pusher",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.inventory_event-replayer_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-replayer_role",
+            "out": "aws_s3_bucket.acp-platform-s-inventory-sandbox1",
+            "label": "['s3:ListBucket']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-replayer_role",
+            "out": "*",
+            "label": "['lambda:ListEventSourceMappings']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-replayer_role",
+            "out": "aws_lambda_function.*",
+            "label": "['lambda:UpdateEventSourceMapping']"
+        },
+        {
+            "in": "aws_iam_role.inventory_event-replayer_role",
+            "out": "aws_kinesis_stream.inventory_event-bus",
+            "label": "['kinesis:PutRecord','kinesis:PutRecords']"
+        },
+        {
+            "in": "aws_lambda_function.inventory_event-replayer",
+            "out": "aws_iam_role.inventory_event-replayer_role",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.inventory_api_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.inventory_api_role",
+            "out": "aws_dynamodb_table.authorisation_token",
+            "label": "['dynamodb:GetItem']"
+        },
+        {
+            "in": "aws_iam_role.inventory_api_role",
+            "out": "aws_dynamodb_table.authentication_key",
+            "label": "['dynamodb:Query']"
+        },
+        {
+            "in": "aws_iam_role.inventory_api_role",
+            "out": "aws_dynamodb_table.authorisation_rbac",
+            "label": "['dynamodb:GetItem']"
+        },
+        {
+            "in": "aws_iam_role.inventory_api_role",
+            "out": "aws_dynamodb_table.inventory_user-query",
+            "label": "['dynamodb:Query','dynamodb:PutItem','dynamodb:GetItem','dynamodb:DeleteItem','dynamodb:DescribeTable']"
+        },
+        {
+            "in": "aws_iam_role.inventory_api_role",
+            "out": "",
+            "label": "['es:DescribeElasticsearchDomain','es:ESHttpGet','es:ESHttpDelete','es:ESHttpHead','es:ESHttpPost','es:ESHttpPut']"
+        },
+        {
+            "in": "aws_lambda_function.inventory_api",
+            "out": "aws_iam_role.inventory_api_role",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.inventory_group-tenant-passthrough_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.inventory_group-tenant-passthrough_role",
+            "out": "*",
+            "label": "['kinesis:GetRecords','kinesis:GetShardIterator','kinesis:DescribeStream','kinesis:ListStreams','kinesis:PutRecord','kinesis:PutRecords']"
+        },
+        {
+            "in": "aws_lambda_function.inventory_group-tenant-passthrough",
+            "out": "aws_iam_role.inventory_group-tenant-passthrough_role",
+            "label": ""
+        },
+        {
+            "in": "aws_kinesis_stream.inventory_group-config",
+            "out": "aws_lambda_function.inventory_group-tenant-passthrough",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.inventory_copy-resource-data_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.inventory_copy-resource-data_role",
+            "out": "",
+            "label": "['logs:CreateLogGroup','logs:CreateLogStream','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.inventory_copy-resource-data_role",
+            "out": "aws_dynamodb_table.inventory_snapshot",
+            "label": "['dynamodb:GetItem','dynamodb:Scan','dynamodb:PutItem']"
+        },
+        {
+            "in": "aws_iam_role.inventory_copy-resource-data_role",
+            "out": "aws_dynamodb_table.inventory_eventlog",
+            "label": "['dynamodb:GetItem','dynamodb:Scan','dynamodb:PutItem']"
+        },
+        {
+            "in": "aws_lambda_function.inventory_copy-resource-data",
+            "out": "aws_iam_role.inventory_copy-resource-data_role",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.inventory_resend-events_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.inventory_resend-events_role",
+            "out": "aws_dynamodb_table.inventory_eventlog",
+            "label": "['dynamodb:GetRecords','dynamodb:GetItem','dynamodb:Query','dynamodb:Scan']"
+        },
+        {
+            "in": "aws_iam_role.inventory_resend-events_role",
+            "out": "*",
+            "label": "['kinesis:DescribeStream','kinesis:ListStreams','kinesis:PutRecord','kinesis:PutRecords']"
+        },
+        {
+            "in": "aws_lambda_function.inventory_resend-events",
+            "out": "aws_iam_role.inventory_resend-events_role",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.inventory_resource-retention_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.inventory_resource-retention_role",
+            "out": "",
+            "label": "['es:DescribeElasticsearchDomain','es:ESHttpGet','es:ESHttpDelete','es:ESHttpHead','es:ESHttpPost','es:ESHttpPut']"
+        },
+        {
+            "in": "aws_lambda_function.inventory_resource-retention",
+            "out": "aws_iam_role.inventory_resource-retention_role",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.inventory_move-s3-prefixes_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.inventory_move-s3-prefixes_role",
+            "out": "aws_sqs_queue.inventory_move-s3-prefixes-queue",
+            "label": "['sqs:GetQueueAttributes','sqs:DeleteMessage','sqs:ChangeMessageVisibility','sqs:DeleteMessageBatch','sqs:ChangeMessageVisibilityBatch','sqs:ReceiveMessage']"
+        },
+        {
+            "in": "aws_iam_role.inventory_move-s3-prefixes_role",
+            "out": "aws_sqs_queue.inventory_move-s3-prefixes-deadletter-queue",
+            "label": "['sqs:GetQueueAttributes','sqs:DeleteMessage','sqs:ChangeMessageVisibility','sqs:DeleteMessageBatch','sqs:ChangeMessageVisibilityBatch','sqs:ReceiveMessage']"
+        },
+        {
+            "in": "aws_iam_role.inventory_move-s3-prefixes_role",
+            "out": "aws_s3_bucket.acp-platform-s-inventory-sandbox1",
+            "label": "['s3:ListBucket']"
+        },
+        {
+            "in": "aws_iam_role.inventory_move-s3-prefixes_role",
+            "out": "aws_s3_bucket.acp-platform-s-inventory-sandbox1/inventory/5",
+            "label": "['s3:GetObject','s3:PutObject','s3:DeleteObject']"
+        },
+        {
+            "in": "aws_lambda_function.inventory_move-s3-prefixes",
+            "out": "aws_iam_role.inventory_move-s3-prefixes_role",
+            "label": ""
+        },
+        {
+            "in": "aws_sqs_queue.inventory_move-s3-prefixes-queue",
+            "out": "aws_lambda_function.inventory_move-s3-prefixes",
+            "label": ""
+        },
+        {
+            "in": "aws_cloudwatch_event_rule.inventory_resource-retention-rule",
+            "out": "aws_lambda_function.inventory_resource-retention",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.inventory_gateway-invoke-lambda",
+            "out": "aws_lambda_function.inventory_api",
+            "label": "['lambda:InvokeFunction']"
+        },
+        {
+            "in": "aws_iam_role.inventory_gateway-invoke-lambda",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        }
+    ],
+    "policy_results": {
+        "aws_iam_role_policy_inventory_move-s3-prefixes_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_inventory_gateway-invoke-lambda_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_lambda_function_inventory_event-replayer": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "handler",
+                            "op": "eq",
+                            "value": "index.handler"
+                        },
+                        "result": false
+                    },
+                    {
+                        "filter": {
+                            "key": "memory_size",
+                            "op": "eq",
+                            "value": "128.0"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "find-nodesjs-lambdas",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_inventory_group-tenant-passthrough_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_inventory_pusher_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_sqs_queue_inventory_move-s3-prefixes-deadletter-queue": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "redrive_policy.maxReceiveCount",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "sqs-max-receive-count-check",
+                "policy_result": false
+            },
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "policy.Version",
+                            "op": "eq",
+                            "value": "2012-10-17"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "sqs-has-inline-policy",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_inventory_resource-retention_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_inventory_event-indexer_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_lambda_function_inventory_resource-retention": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "handler",
+                            "op": "eq",
+                            "value": "index.handler"
+                        },
+                        "result": false
+                    },
+                    {
+                        "filter": {
+                            "key": "memory_size",
+                            "op": "eq",
+                            "value": "128.0"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "find-nodesjs-lambdas",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_inventory_event-history_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_lambda_function_inventory_event-history": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "handler",
+                            "op": "eq",
+                            "value": "index.handler"
+                        },
+                        "result": false
+                    },
+                    {
+                        "filter": {
+                            "key": "memory_size",
+                            "op": "eq",
+                            "value": "128.0"
+                        },
+                        "result": true
+                    }
+                ],
+                "policy_id": "find-nodesjs-lambdas",
+                "policy_result": false
+            }
+        ],
+        "aws_sqs_queue_inventory_move-s3-prefixes-queue": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "redrive_policy.maxReceiveCount",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "sqs-max-receive-count-check",
+                "policy_result": false
+            },
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "policy.Version",
+                            "op": "eq",
+                            "value": "2012-10-17"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "sqs-has-inline-policy",
+                "policy_result": false
+            }
+        ],
+        "aws_lambda_function_inventory_event-log": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "handler",
+                            "op": "eq",
+                            "value": "index.handler"
+                        },
+                        "result": false
+                    },
+                    {
+                        "filter": {
+                            "key": "memory_size",
+                            "op": "eq",
+                            "value": "128.0"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "find-nodesjs-lambdas",
+                "policy_result": false
+            }
+        ],
+        "aws_lambda_function_inventory_event-indexer": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "handler",
+                            "op": "eq",
+                            "value": "index.handler"
+                        },
+                        "result": false
+                    },
+                    {
+                        "filter": {
+                            "key": "memory_size",
+                            "op": "eq",
+                            "value": "128.0"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "find-nodesjs-lambdas",
+                "policy_result": false
+            }
+        ],
+        "aws_lambda_function_inventory_event-router": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "handler",
+                            "op": "eq",
+                            "value": "index.handler"
+                        },
+                        "result": false
+                    },
+                    {
+                        "filter": {
+                            "key": "memory_size",
+                            "op": "eq",
+                            "value": "128.0"
+                        },
+                        "result": true
+                    }
+                ],
+                "policy_id": "find-nodesjs-lambdas",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_inventory_event-log_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_lambda_function_inventory_move-s3-prefixes": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "handler",
+                            "op": "eq",
+                            "value": "index.handler"
+                        },
+                        "result": true
+                    },
+                    {
+                        "filter": {
+                            "key": "memory_size",
+                            "op": "eq",
+                            "value": "128.0"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "find-nodesjs-lambdas",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_inventory_event-replayer_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_lambda_function_inventory_api": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "handler",
+                            "op": "eq",
+                            "value": "index.handler"
+                        },
+                        "result": false
+                    },
+                    {
+                        "filter": {
+                            "key": "memory_size",
+                            "op": "eq",
+                            "value": "128.0"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "find-nodesjs-lambdas",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_inventory_api_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_inventory_resend-events_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_inventory_copy-resource-data_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_inventory_event-router_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_lambda_function_inventory_pusher": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "handler",
+                            "op": "eq",
+                            "value": "index.handler"
+                        },
+                        "result": false
+                    },
+                    {
+                        "filter": {
+                            "key": "memory_size",
+                            "op": "eq",
+                            "value": "128.0"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "find-nodesjs-lambdas",
+                "policy_result": false
+            }
+        ]
+    }
+}

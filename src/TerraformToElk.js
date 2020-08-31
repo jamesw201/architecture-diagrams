@@ -1,8 +1,4 @@
-import data from './discovery_graph.json';
 import * as R from 'ramda';
-
-console.log(data.resources.length);
-console.log(data.relationships.length);
 
 function generateNodes(resources) {
     const invalidResources = ['provider', 'terraform', 'terraform_remote_state', 'variable', 
@@ -10,8 +6,14 @@ function generateNodes(resources) {
     'aws_api_gateway_integration', 'aws_appautoscaling_target', 'aws_appautoscaling_policy', 
     'aws_api_gateway_method', 'aws_api_gateway_resource', 'aws_route_table', 'aws_route', 
     'aws_route_table_association', 'aws_kms_alias', 'aws_flow_log', 'aws_cloudwatch_log_group',
-    'aws_iam_policy_document', 'aws_cloudwatch_event_rule', 'aws_cloudwatch_event_target'];
+    'aws_iam_policy_document', 'aws_cloudwatch_event_rule', 'aws_cloudwatch_event_target',
+    'aws_cloudwatch_dashboard', 'aws_cloudwatch_log_metric_filter', 'aws_lambda_permission',
+    'aws_internet_gateway', 'aws_eip', 'aws_vpc_endpoint', 'aws_s3_bucket_object',
+    'aws_main_route_table_association', 'aws_s3_bucket_notification', 'aws_sns_topic_subscription',
+    'aws_security_group', 'aws_api_gateway_rest_api', 'aws_api_gateway_deployment',
+    'aws_lambda_event_source_mapping', 'aws_elasticache_replication_group',];
     // aws_kms_key
+    // aws_iam_role_policy_attachment
 
     const validResources = resources
         .map((resource, idx) => ({
@@ -83,7 +85,7 @@ export function mergeRoleRelationships(roleRelationshipPair) {
     }
 }
 
-export function root() {
+export function root(data) {
     const children = generateNodes(data.resources);
     const edges = generateEdges(data.relationships, children);
     

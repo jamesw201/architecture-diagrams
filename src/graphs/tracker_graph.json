@@ -1,0 +1,1058 @@
+{
+    "resources": [
+        {
+            "type": "provider",
+            "name": "aws",
+            "body": {
+                "region": "us-east-1",
+                "shared_credentials_file": "/Users/james.n.wilson/.aws/credentials",
+                "profile": "stage-env1"
+            }
+        },
+        {
+            "type": "terraform",
+            "body": {
+                "required_version": "= 0.11.2",
+                "backend": {
+                    "type": "inner",
+                    "name": "s3",
+                    "body": {
+                        "bucket": "acp-platform-s-tracker-stage-env1",
+                        "key": "infrastructure/terraform.tfstate",
+                        "region": "us-east-1"
+                    }
+                }
+            }
+        },
+        {
+            "type": "terraform_remote_state",
+            "name": "acp-platform-s-tracker-stage-env1_remote_state",
+            "body": {
+                "backend": "s3",
+                "config": {
+                    "bucket": "acp-platform-s-tracker-stage-env1",
+                    "key": "infrastructure/terraform.tfstate",
+                    "region": "us-east-1"
+                }
+            }
+        },
+        {
+            "type": "aws_security_group",
+            "name": "tracker_security-group",
+            "body": {
+                "name": "tracker_security-group",
+                "description": "Security group for tracker to Elasticsearch",
+                "vpc_id": "vpc-08a97371868c35cef",
+                "tags": {
+                    "Name": "tracker_security-group",
+                    "Description": "tracker security group used by Platform.S",
+                    "CreatedBy": "Platform.S create-infra.py"
+                },
+                "egress": {
+                    "from_port": "443.0",
+                    "to_port": "443.0",
+                    "protocol": "TCP",
+                    "cidr_blocks": [
+                        "0.0.0.0/0"
+                    ]
+                }
+            }
+        },
+        {
+            "type": "aws_dynamodb_table",
+            "name": "tracker_compliance",
+            "body": {
+                "name": "tracker_compliance",
+                "attribute": {
+                    "name": "complianceCheck",
+                    "type": "S"
+                },
+                "hash_key": "complianceCheck",
+                "range_key": "id",
+                "stream_view_type": "NEW_AND_OLD_IMAGES",
+                "stream_enabled": "true",
+                "lifecycle": {
+                    "prevent_destroy": "true"
+                },
+                "read_capacity": "10.0",
+                "write_capacity": "10.0",
+                "tags": {
+                    "Environment": "stage-env1",
+                    "Name": "tracker_compliance",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Component": "tracker"
+                },
+                "point_in_time_recovery": {
+                    "enabled": "true"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "tracker_api_role",
+            "body": {
+                "name": "tracker_api_role",
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "tags": {
+                    "Environment": "stage-env1",
+                    "Name": "tracker_api_role",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Component": "tracker"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "tracker_api_role_policy",
+            "body": {
+                "name": "tracker_api_role_policy",
+                "role": "aws_iam_role.tracker_api_role.id",
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*tracker_api*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "dynamodb:Query",
+                                "dynamodb:PutItem",
+                                "dynamodb:GetItem",
+                                "dynamodb:DeleteItem",
+                                "dynamodb:Scan"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:dynamodb:us-east-1:148354739297:table/tracker_compliance/*",
+                                "arn:aws:dynamodb:us-east-1:148354739297:table/tracker_compliance"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "dynamodb:Query"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:dynamodb:us-east-1:148354739297:table/authentication_key/*",
+                                "arn:aws:dynamodb:us-east-1:148354739297:table/authentication_key"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "dynamodb:GetItem"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:dynamodb:us-east-1:148354739297:table/authorisation_token/*",
+                                "arn:aws:dynamodb:us-east-1:148354739297:table/authorisation_token"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "es:ESHttpGet",
+                                "es:ESHttpHead",
+                                "es:ESHttpPost"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:es:us-east-1:148354739297:domain/governance-domain/*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "ec2:CreateNetworkInterface",
+                                "ec2:DescribeNetworkInterfaces",
+                                "ec2:DeleteNetworkInterface"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "*"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "depends_on": [
+                    "aws_iam_role.tracker_api_role"
+                ]
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "tracker_api_runaway_alarm",
+            "body": {
+                "comparison_operator": "GreaterThanOrEqualToThreshold",
+                "evaluation_periods": "6.0",
+                "datapoints_to_alarm": "6.0",
+                "metric_name": "Invocations",
+                "namespace": "AWS/Lambda",
+                "period": "300.0",
+                "statistic": "SampleCount",
+                "threshold": "500.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "treat_missing_data": "notBreaching",
+                "dimensions": {
+                    "FunctionName": "tracker_api"
+                },
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "alarm_name": "tracker_api_runaway_alarm",
+                "tags": {
+                    "Environment": "stage-env1",
+                    "Name": "tracker_api_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Component": "tracker"
+                }
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "tracker_api_lambda-errors",
+            "body": {
+                "comparison_operator": "GreaterThanThreshold",
+                "evaluation_periods": "1.0",
+                "datapoints_to_alarm": "1.0",
+                "metric_name": "Errors",
+                "namespace": "AWS/Lambda",
+                "period": "3600.0",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "treat_missing_data": "notBreaching",
+                "dimensions": {
+                    "FunctionName": "tracker_api"
+                },
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "alarm_name": "tracker_api_lambda-errors",
+                "tags": {
+                    "Environment": "stage-env1",
+                    "Name": "tracker_api_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Component": "tracker"
+                }
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "tracker_api",
+            "body": {
+                "description": "Tracker API querying tracker_compliance dynamo table",
+                "handler": "lib/index.handler",
+                "runtime": "nodejs10.x",
+                "memory_size": "1024.0",
+                "timeout": "30.0",
+                "filename": "/tmp/nodejs_lambda_stub.zip",
+                "vpc_config": {
+                    "subnet_ids": [
+                        "subnet-0dfb1c344742e2a4f",
+                        "subnet-074c6ca849898109d",
+                        "subnet-00edef55b3370b046"
+                    ],
+                    "security_group_ids": [
+                        "aws_security_group.tracker_security-group.id"
+                    ]
+                },
+                "role": "aws_iam_role.tracker_api_role.arn",
+                "depends_on": [
+                    "aws_iam_role.tracker_api_role"
+                ],
+                "function_name": "tracker_api",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "tags": {
+                    "Environment": "stage-env1",
+                    "Name": "tracker_api",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Component": "tracker"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "tracker_policy-sync_role",
+            "body": {
+                "name": "tracker_policy-sync_role",
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "tags": {
+                    "Environment": "stage-env1",
+                    "Name": "tracker_policy-sync_role",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Component": "tracker"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "tracker_policy-sync_role_policy",
+            "body": {
+                "name": "tracker_policy-sync_role_policy",
+                "role": "aws_iam_role.tracker_policy-sync_role.id",
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*tracker_policy-sync*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "es:ESHttpGet",
+                                "es:ESHttpHead",
+                                "es:ESHttpPost"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:es:us-east-1:148354739297:domain/governance-domain/*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:GetObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-tracker-stage-env1/env/*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:ListBucket"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-action-stage-env1"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:GetObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-action-stage-env1/report/*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "s3:GetObject",
+                                "s3:DeleteObject"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:s3:::acp-platform-s-action-stage-env1/tracker-sync/*.json"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "cloudwatch:PutMetricData",
+                                "cloudwatch:GetMetricStatistics"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "*"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "depends_on": [
+                    "aws_iam_role.tracker_policy-sync_role"
+                ]
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "tracker_policy-sync_runaway_alarm",
+            "body": {
+                "comparison_operator": "GreaterThanOrEqualToThreshold",
+                "evaluation_periods": "6.0",
+                "datapoints_to_alarm": "6.0",
+                "metric_name": "Invocations",
+                "namespace": "AWS/Lambda",
+                "period": "300.0",
+                "statistic": "SampleCount",
+                "threshold": "100.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "treat_missing_data": "notBreaching",
+                "dimensions": {
+                    "FunctionName": "tracker_policy-sync"
+                },
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "alarm_name": "tracker_policy-sync_runaway_alarm",
+                "tags": {
+                    "Environment": "stage-env1",
+                    "Name": "tracker_policy-sync_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Component": "tracker"
+                }
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "tracker_policy-sync_lambda-errors",
+            "body": {
+                "comparison_operator": "GreaterThanThreshold",
+                "evaluation_periods": "1.0",
+                "datapoints_to_alarm": "1.0",
+                "metric_name": "Errors",
+                "namespace": "AWS/Lambda",
+                "period": "3600.0",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "treat_missing_data": "notBreaching",
+                "dimensions": {
+                    "FunctionName": "tracker_policy-sync"
+                },
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "alarm_name": "tracker_policy-sync_lambda-errors",
+                "tags": {
+                    "Environment": "stage-env1",
+                    "Name": "tracker_policy-sync_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Component": "tracker"
+                }
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "tracker_policy-sync",
+            "body": {
+                "description": "Synchronisation with service policy. Any new system wide compliance watch policy items will be stored here.",
+                "handler": "lib/index.handler",
+                "runtime": "nodejs10.x",
+                "memory_size": "2048.0",
+                "timeout": "900.0",
+                "filename": "/tmp/nodejs_lambda_stub.zip",
+                "role": "aws_iam_role.tracker_policy-sync_role.arn",
+                "depends_on": [
+                    "aws_iam_role.tracker_policy-sync_role"
+                ],
+                "function_name": "tracker_policy-sync",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "tags": {
+                    "Environment": "stage-env1",
+                    "Name": "tracker_policy-sync",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Component": "tracker"
+                }
+            }
+        },
+        {
+            "type": "aws_lambda_permission",
+            "name": "tracker_policy-sync_policy_compliance-watch-violations-topic_sns_invoke_lambda_permission",
+            "body": {
+                "source_arn": "arn:aws:sns:us-east-1:148354739297:policy_compliance-watch-violations-topic",
+                "statement_id": "tracker_policy-sync_policy_compliance-watch-violations-topic_sns_invoke_lambda_permission",
+                "action": "lambda:InvokeFunction",
+                "principal": "sns.amazonaws.com",
+                "function_name": "aws_lambda_function.tracker_policy-sync.arn",
+                "depends_on": [
+                    "aws_lambda_function.tracker_policy-sync"
+                ]
+            }
+        },
+        {
+            "type": "aws_sns_topic_subscription",
+            "name": "tracker_policy-sync_Sub_policy_compliance-watch-violations-topic",
+            "body": {
+                "protocol": "lambda",
+                "topic_arn": "arn:aws:sns:us-east-1:148354739297:policy_compliance-watch-violations-topic",
+                "endpoint": "aws_lambda_function.tracker_policy-sync.arn",
+                "depends_on": [
+                    "aws_lambda_function.tracker_policy-sync"
+                ]
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "tracker_dynamo-es-sync_role",
+            "body": {
+                "name": "tracker_dynamo-es-sync_role",
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "tags": {
+                    "Environment": "stage-env1",
+                    "Name": "tracker_dynamo-es-sync_role",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Component": "tracker"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "tracker_dynamo-es-sync_role_policy",
+            "body": {
+                "name": "tracker_dynamo-es-sync_role_policy",
+                "role": "aws_iam_role.tracker_dynamo-es-sync_role.id",
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:log-group:/aws/lambda/*tracker_dynamo-es-sync*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "dynamodb:GetRecords",
+                                "dynamodb:GetShardIterator",
+                                "dynamodb:DescribeStream",
+                                "dynamodb:ListStreams"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:dynamodb:us-east-1:148354739297:table/tracker_compliance/*",
+                                "arn:aws:dynamodb:us-east-1:148354739297:table/tracker_compliance"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "es:ESHttpGet",
+                                "es:ESHttpDelete",
+                                "es:ESHttpHead",
+                                "es:ESHttpPost",
+                                "es:ESHttpPut"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:es:us-east-1:148354739297:domain/governance-domain/*"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "ec2:CreateNetworkInterface",
+                                "ec2:DescribeNetworkInterfaces",
+                                "ec2:DeleteNetworkInterface"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "*"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "depends_on": [
+                    "aws_iam_role.tracker_dynamo-es-sync_role"
+                ]
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "tracker_dynamo-es-sync_runaway_alarm",
+            "body": {
+                "comparison_operator": "GreaterThanOrEqualToThreshold",
+                "evaluation_periods": "6.0",
+                "datapoints_to_alarm": "6.0",
+                "metric_name": "Invocations",
+                "namespace": "AWS/Lambda",
+                "period": "300.0",
+                "statistic": "SampleCount",
+                "threshold": "100.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "treat_missing_data": "notBreaching",
+                "dimensions": {
+                    "FunctionName": "tracker_dynamo-es-sync"
+                },
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "alarm_name": "tracker_dynamo-es-sync_runaway_alarm",
+                "tags": {
+                    "Environment": "stage-env1",
+                    "Name": "tracker_dynamo-es-sync_runaway_alarm",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Component": "tracker"
+                }
+            }
+        },
+        {
+            "type": "aws_cloudwatch_metric_alarm",
+            "name": "tracker_dynamo-es-sync_lambda-errors",
+            "body": {
+                "comparison_operator": "GreaterThanThreshold",
+                "evaluation_periods": "1.0",
+                "datapoints_to_alarm": "1.0",
+                "metric_name": "Errors",
+                "namespace": "AWS/Lambda",
+                "period": "3600.0",
+                "statistic": "Sum",
+                "threshold": "0.0",
+                "alarm_description": "This metric monitors an individual lambdas invocations",
+                "treat_missing_data": "notBreaching",
+                "dimensions": {
+                    "FunctionName": "tracker_dynamo-es-sync"
+                },
+                "lifecycle": {
+                    "ignore_changes": [
+                        "alarm_actions"
+                    ]
+                },
+                "alarm_name": "tracker_dynamo-es-sync_lambda-errors",
+                "tags": {
+                    "Environment": "stage-env1",
+                    "Name": "tracker_dynamo-es-sync_lambda-errors",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Component": "tracker"
+                }
+            }
+        },
+        {
+            "type": "aws_lambda_function",
+            "name": "tracker_dynamo-es-sync",
+            "body": {
+                "description": "stream lambda for syncing dynamo to elasticsearch",
+                "handler": "index.handler",
+                "runtime": "python3.6",
+                "memory_size": "512.0",
+                "timeout": "60.0",
+                "filename": "/tmp/python_lambda_stub.zip",
+                "vpc_config": {
+                    "subnet_ids": [
+                        "subnet-0dfb1c344742e2a4f",
+                        "subnet-074c6ca849898109d",
+                        "subnet-00edef55b3370b046"
+                    ],
+                    "security_group_ids": [
+                        "aws_security_group.tracker_security-group.id"
+                    ]
+                },
+                "role": "aws_iam_role.tracker_dynamo-es-sync_role.arn",
+                "depends_on": [
+                    "aws_iam_role.tracker_dynamo-es-sync_role"
+                ],
+                "function_name": "tracker_dynamo-es-sync",
+                "lifecycle": {
+                    "ignore_changes": [
+                        "handler",
+                        "environment"
+                    ]
+                },
+                "tags": {
+                    "Environment": "stage-env1",
+                    "Name": "tracker_dynamo-es-sync",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Component": "tracker"
+                }
+            }
+        },
+        {
+            "type": "aws_lambda_event_source_mapping",
+            "name": "tracker_dynamo-es-sync_EvtMap_tracker_stream",
+            "body": {
+                "function_name": "tracker_dynamo-es-sync",
+                "event_source_arn": "aws_dynamodb_table.tracker_compliance.stream_arn",
+                "starting_position": "TRIM_HORIZON",
+                "batch_size": "100.0",
+                "depends_on": [
+                    "aws_lambda_function.tracker_dynamo-es-sync"
+                ]
+            }
+        },
+        {
+            "type": "aws_iam_role",
+            "name": "tracker_gateway-invoke-lambda",
+            "body": {
+                "name": "tracker_gateway-invoke-lambda",
+                "assume_role_policy": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "apigateway.amazonaws.com"
+                            },
+                            "Sid": ""
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                },
+                "tags": {
+                    "Environment": "stage-env1",
+                    "Name": "tracker_gateway-invoke-lambda",
+                    "CreatedBy": "Platform.S create-infra.py",
+                    "Component": "tracker"
+                }
+            }
+        },
+        {
+            "type": "aws_iam_role_policy",
+            "name": "tracker_gateway-invoke-lambda_role_policy",
+            "body": {
+                "name": "tracker_gateway-invoke-lambda_role_policy",
+                "role": "aws_iam_role.tracker_gateway-invoke-lambda.id",
+                "policy": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "lambda:InvokeFunction"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:lambda:us-east-1:148354739297:function:tracker_api"
+                            ]
+                        },
+                        {
+                            "Action": [
+                                "logs:CreateLogStream",
+                                "logs:CreateLogGroup",
+                                "logs:PutLogEvents"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "arn:aws:logs:*:*:*"
+                            ]
+                        }
+                    ],
+                    "Version": "2012-10-17"
+                }
+            }
+        }
+    ],
+    "relationships": [
+        {
+            "in": "aws_iam_role.tracker_api_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.tracker_api_role",
+            "out": "aws_dynamodb_table.tracker_compliance",
+            "label": "['dynamodb:Query','dynamodb:PutItem','dynamodb:GetItem','dynamodb:DeleteItem','dynamodb:Scan']"
+        },
+        {
+            "in": "aws_iam_role.tracker_api_role",
+            "out": "aws_dynamodb_table.authentication_key",
+            "label": "['dynamodb:Query']"
+        },
+        {
+            "in": "aws_iam_role.tracker_api_role",
+            "out": "aws_dynamodb_table.authorisation_token",
+            "label": "['dynamodb:GetItem']"
+        },
+        {
+            "in": "aws_iam_role.tracker_api_role",
+            "out": "",
+            "label": "['es:ESHttpGet','es:ESHttpHead','es:ESHttpPost']"
+        },
+        {
+            "in": "aws_iam_role.tracker_api_role",
+            "out": "*",
+            "label": "['ec2:CreateNetworkInterface','ec2:DescribeNetworkInterfaces','ec2:DeleteNetworkInterface']"
+        },
+        {
+            "in": "aws_lambda_function.tracker_api",
+            "out": "aws_iam_role.tracker_api_role",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.tracker_policy-sync_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.tracker_policy-sync_role",
+            "out": "",
+            "label": "['es:ESHttpGet','es:ESHttpHead','es:ESHttpPost']"
+        },
+        {
+            "in": "aws_iam_role.tracker_policy-sync_role",
+            "out": "aws_s3_bucket.acp-platform-s-tracker-stage-env1/env",
+            "label": "['s3:GetObject']"
+        },
+        {
+            "in": "aws_iam_role.tracker_policy-sync_role",
+            "out": "aws_s3_bucket.acp-platform-s-action-stage-env1",
+            "label": "['s3:ListBucket']"
+        },
+        {
+            "in": "aws_iam_role.tracker_policy-sync_role",
+            "out": "aws_s3_bucket.acp-platform-s-action-stage-env1/report",
+            "label": "['s3:GetObject']"
+        },
+        {
+            "in": "aws_iam_role.tracker_policy-sync_role",
+            "out": "aws_s3_bucket.acp-platform-s-action-stage-env1/tracker-sync/*.json",
+            "label": "['s3:GetObject','s3:DeleteObject']"
+        },
+        {
+            "in": "aws_iam_role.tracker_policy-sync_role",
+            "out": "*",
+            "label": "['cloudwatch:PutMetricData','cloudwatch:GetMetricStatistics']"
+        },
+        {
+            "in": "aws_lambda_function.tracker_policy-sync",
+            "out": "aws_iam_role.tracker_policy-sync_role",
+            "label": ""
+        },
+        {
+            "in": "arn:aws:sns:us-east-1:148354739297:policy_compliance-watch-violations-topic",
+            "out": "aws_lambda_function.tracker_policy-sync",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.tracker_dynamo-es-sync_role",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        },
+        {
+            "in": "aws_iam_role.tracker_dynamo-es-sync_role",
+            "out": "aws_dynamodb_table.tracker_compliance",
+            "label": "['dynamodb:GetRecords','dynamodb:GetShardIterator','dynamodb:DescribeStream','dynamodb:ListStreams']"
+        },
+        {
+            "in": "aws_iam_role.tracker_dynamo-es-sync_role",
+            "out": "",
+            "label": "['es:ESHttpGet','es:ESHttpDelete','es:ESHttpHead','es:ESHttpPost','es:ESHttpPut']"
+        },
+        {
+            "in": "aws_iam_role.tracker_dynamo-es-sync_role",
+            "out": "*",
+            "label": "['ec2:CreateNetworkInterface','ec2:DescribeNetworkInterfaces','ec2:DeleteNetworkInterface']"
+        },
+        {
+            "in": "aws_lambda_function.tracker_dynamo-es-sync",
+            "out": "aws_iam_role.tracker_dynamo-es-sync_role",
+            "label": ""
+        },
+        {
+            "in": "aws_dynamodb_table.tracker_compliance.stream_arn",
+            "out": "aws_lambda_function.tracker_dynamo-es-sync",
+            "label": ""
+        },
+        {
+            "in": "aws_iam_role.tracker_gateway-invoke-lambda",
+            "out": "aws_lambda_function.tracker_api",
+            "label": "['lambda:InvokeFunction']"
+        },
+        {
+            "in": "aws_iam_role.tracker_gateway-invoke-lambda",
+            "out": "",
+            "label": "['logs:CreateLogStream','logs:CreateLogGroup','logs:PutLogEvents']"
+        }
+    ],
+    "policy_results": {
+        "aws_iam_role_policy_tracker_dynamo-es-sync_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_tracker_gateway-invoke-lambda_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_lambda_function_tracker_dynamo-es-sync": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "handler",
+                            "op": "eq",
+                            "value": "index.handler"
+                        },
+                        "result": true
+                    },
+                    {
+                        "filter": {
+                            "key": "memory_size",
+                            "op": "eq",
+                            "value": "128.0"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "find-nodesjs-lambdas",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_tracker_api_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ],
+        "aws_lambda_function_tracker_policy-sync": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "handler",
+                            "op": "eq",
+                            "value": "index.handler"
+                        },
+                        "result": false
+                    },
+                    {
+                        "filter": {
+                            "key": "memory_size",
+                            "op": "eq",
+                            "value": "128.0"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "find-nodesjs-lambdas",
+                "policy_result": false
+            }
+        ],
+        "aws_lambda_function_tracker_api": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "handler",
+                            "op": "eq",
+                            "value": "index.handler"
+                        },
+                        "result": false
+                    },
+                    {
+                        "filter": {
+                            "key": "memory_size",
+                            "op": "eq",
+                            "value": "128.0"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "find-nodesjs-lambdas",
+                "policy_result": false
+            }
+        ],
+        "aws_iam_role_policy_tracker_policy-sync_role_policy": [
+            {
+                "filters": [
+                    {
+                        "filter": {
+                            "key": "visibility_timeout_seconds",
+                            "op": "eq",
+                            "value": "3.1"
+                        },
+                        "result": false
+                    }
+                ],
+                "policy_id": "policy-id-check",
+                "policy_result": false
+            }
+        ]
+    }
+}

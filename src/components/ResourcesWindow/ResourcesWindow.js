@@ -5,13 +5,13 @@ import { useRecoilValue } from 'recoil';
 
 import "ace-builds/src-noconflict/theme-github";
 
-import { darkBrown } from '../../styles/colours';
+import { navBarColour } from '../../styles/colours';
 
 import { resourceInFocusState } from '../../recoil_store';
 
 export const ResourcesWindowStyled = styled.div`
-    border-top: 1px solid ${darkBrown};
-    border-right: 1px solid ${darkBrown};
+    border-top: 1px solid ${navBarColour};
+    border-right: 1px solid ${navBarColour};
     max-height: 60px;
 `;
 
