@@ -15,5 +15,10 @@ const resourceInFocusState = atom({
     default: {}
 });
 
+const fileNameState = atom({
+    key: "filename",
+    default: ''
+});
 
-export { count, graphState, resourceInFocusState };
+
+export { count, graphState, resourceInFocusState, fileNameState };

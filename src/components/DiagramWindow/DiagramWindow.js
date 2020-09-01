@@ -47,7 +47,6 @@ function canvasClick(nodes, findX, findY, graph, setResourceInFocus) {
     if (result.length > 0) {
         const resource = graph.resources.find(resource => resource.name === result[0].labels[0].text);
         setResourceInFocus(resource);
-        // alert(result[0].labels[0].text);
     } else {
         alert('not found');
     }

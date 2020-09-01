@@ -3,16 +3,20 @@ import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { FilePicker } from 'react-file-picker';
 
-import { graphState } from '../recoil_store';
+import { graphState, fileNameState } from '../recoil_store';
 import { filePickerBarColour } from '../styles/colours';
 
 const FilePickerBarStyled = styled.div`
     background-color: ${filePickerBarColour};
     padding: 4px;
     display: grid;
-    grid-template-columns: auto 180px;
+    grid-template-columns: 120px auto 132px;
 `;
 
+const FilenameStyle = styled.div`
+    color: white;
+    padding-left: 8px;
+`;
 
 function readFile(fileObject, setGraph) {
     const read = new FileReader();
@@ -25,17 +29,23 @@ function readFile(fileObject, setGraph) {
 }
 
 export function FilePickerBar() {
+    const [filename, setFilename] = useRecoilState(fileNameState);
     const [graph, setGraph] = useRecoilState(graphState);
 
     return <FilePickerBarStyled>
+        <FilenameStyle>{filename}</FilenameStyle>
         <div />
         <FilePicker
             extensions={['json']}
-            onChange={FileObject => readFile(FileObject, setGraph)}
+            onChange={FileObject => {
+                const minusSuffix = FileObject.name.substring(0, FileObject.name.indexOf('.json'));
+                setFilename(minusSuffix)
+                readFile(FileObject, setGraph)
+            }}
             onError={errMsg => console.log(`file-picker error: ${errMsg}`)}
         >
             <button>
-            Click to select terraform file
+            Select terraform file
             </button>
         </FilePicker>
     </FilePickerBarStyled>

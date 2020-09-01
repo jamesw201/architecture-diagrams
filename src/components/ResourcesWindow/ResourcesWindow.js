@@ -15,12 +15,15 @@ export const ResourcesWindowStyled = styled.div`
     max-height: 60px;
 `;
 
+const ResourceTitleStyled = styled.p`
+    padding-left: 4px;
+`;
 
 export function ResourcesWindow() {
     const resourceInFocus = useRecoilValue(resourceInFocusState);
 
     return <ResourcesWindowStyled>
-        <p>{resourceInFocus.name}</p>
+        <ResourceTitleStyled>{resourceInFocus.name}</ResourceTitleStyled>
         <AceEditor
             name="generatedCode"
             mode="json"

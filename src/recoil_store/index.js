@@ -1,2 +1,2 @@
 
-export { count, graphState, resourceInFocusState } from './atoms'
+export { count, graphState, resourceInFocusState, fileNameState } from './atoms'
