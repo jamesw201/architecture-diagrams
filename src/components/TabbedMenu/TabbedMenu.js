@@ -8,12 +8,11 @@ import "ace-builds/src-noconflict/theme-github";
 import { graphState, resourceInFocusState } from '../../recoil_store';
 
 export const TabbedMenuStyled = styled.div`
-    border-right: 1px solid black;
     border-bottom: 1px solid black;
     border-top: 1px solid black;
     display: grid;
     grid-template-rows: 30px auto;
-    margin: 5px;
+    margin-top: 5px;
     width: 100%;
     margin-left: 0;
 `;

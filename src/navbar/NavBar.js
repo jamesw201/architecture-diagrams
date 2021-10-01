@@ -8,9 +8,6 @@ const NavBarStyled = styled.div`
     background-color: ${navBarColour};
     padding: 10px;
     display: grid;
-    border-top: 1px solid black;
-    border-right: 1px solid black;
-    border-left: 1px solid black;
     grid-template-columns: 300px auto 80px 80px 40px;
 `;
 

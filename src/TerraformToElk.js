@@ -11,7 +11,7 @@ function generateNodes(resources) {
     'aws_internet_gateway', 'aws_eip', 'aws_vpc_endpoint', 'aws_s3_bucket_object',
     'aws_main_route_table_association', 'aws_s3_bucket_notification', 'aws_sns_topic_subscription',
     'aws_security_group', 'aws_api_gateway_rest_api', 'aws_api_gateway_deployment',
-    'aws_lambda_event_source_mapping', 'aws_elasticache_replication_group',];
+    'aws_lambda_event_source_mapping', 'aws_elasticache_replication_group'];
     // aws_kms_key
     // aws_iam_role_policy_attachment
 

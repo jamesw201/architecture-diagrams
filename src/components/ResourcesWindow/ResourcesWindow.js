@@ -5,17 +5,13 @@ import { useRecoilValue } from 'recoil';
 
 import "ace-builds/src-noconflict/theme-github";
 
-import { navBarColour } from '../../styles/colours';
-
 import { resourceInFocusState } from '../../recoil_store';
 
 export const ResourcesWindowStyled = styled.div`
-    border-top: 1px solid ${navBarColour};
-    border-right: 1px solid ${navBarColour};
     max-height: 60px;
 `;
 
-const ResourceTitleStyled = styled.p`
+const ResourceTitle = styled.p`
     padding-left: 4px;
 `;
 
@@ -23,7 +19,7 @@ export function ResourcesWindow() {
     const resourceInFocus = useRecoilValue(resourceInFocusState);
 
     return <ResourcesWindowStyled>
-        <ResourceTitleStyled>{resourceInFocus.name}</ResourceTitleStyled>
+        <ResourceTitle>{resourceInFocus.name}</ResourceTitle>
         <AceEditor
             name="generatedCode"
             mode="json"
@@ -33,7 +29,7 @@ export function ResourcesWindow() {
             }}
             editorProps={{ $blockScrolling: false }}
             fontSize="13px"
-            height="400px"
+            height="404px"
             value={JSON.stringify(resourceInFocus, null, 2)}
         />
     </ResourcesWindowStyled>
